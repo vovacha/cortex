@@ -7,26 +7,10 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "ELRMCF Software",
+    "productName": "Concierge",
     "version": "0.1.0"
   },
   "tauri": {
-    "allowlist": {
-      "shell": {
-        "all": true,
-        "execute": true,
-        "sidecar": true,
-        "open": true,
-        "scope": [
-          {
-            "name": "system_profiler",
-            "cmd": "system_profiler",
-            "args": [{ "validator": "\\S+" }]
-          }
-        ]
-      },
-      "all": true
-    },
     "bundle": {
       "active": true,
       "category": "DeveloperTool",
@@ -56,9 +40,6 @@
     },
     "security": {
       "csp": null
-    },
-    "updater": {
-      "active": false
     },
     "windows": [
       {

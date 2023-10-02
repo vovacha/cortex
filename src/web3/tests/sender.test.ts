@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
 import { sendNativeCurrency, sendToken } from '../sender'
 
-describe('crypto module', () => {
+describe('web3 sender module', () => {
   test('sends native currency transaction', async () => {
     const chain = 'polygon'
     const privateKey = '0x8dfad43ab3537a243c1c16d6b342aad6b5dc844ef597ea0601c5eb80508a8443'

@@ -1,9 +1,5 @@
 import { open } from '@tauri-apps/api/dialog'
 import { readTextFile } from '@tauri-apps/api/fs'
-import { Command } from '@tauri-apps/api/shell'
-// import { platform } from '@tauri-apps/api/os'
-
-// const platformName = await platform()
 
 export function classNames(...classes: any): any {
   return classes.filter(Boolean).join(' ')
@@ -26,14 +22,6 @@ export async function openReadTextFile (): Promise<string | undefined> {
   } else {
     return await readTextFile(selected)
   }
-}
-
-export async function getUUID (): Promise<string[]> {
-  const command = new Command('system_profiler', 'SPHardwareDataType')
-  const res = await command.execute()
-  // https://stackoverflow.com/questions/432493/how-do-you-access-the-matched-groups-in-a-javascript-regular-expression
-  const array = [...res.stdout.matchAll(/Hardware UUID: (.+)/g)]
-  return array.map((m) => m[1])
 }
 
 export function shuffleArray (array: any[]): any[] {

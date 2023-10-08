@@ -30,7 +30,7 @@ function getJsonRpcProvider (chain: string): JsonRpcProvider {
   return new JsonRpcProvider(`https://rpc.ankr.com/${chain}/${API_KEY}`)
 }
 
-export async function sendNativeCurrency(chain: string, privateKey: string, toAddress: string, amount: number): Promise<TransactionReceipt> {
+export async function sendNativeCurrency (chain: string, privateKey: string, toAddress: string, amount: number): Promise<TransactionReceipt> {
   const provider = getJsonRpcProvider(chain)
   const wallet = new Wallet(privateKey)
   const signer = wallet.connect(provider)
@@ -76,7 +76,7 @@ export async function sendToken (chain: string, privateKey: string, toAddress: s
   return message
 }
 
-export async function validateContract(chain: string, address: string): Promise<boolean> {
+export async function validateContract (chain: string, address: string): Promise<boolean> {
   const provider = getJsonRpcProvider(chain)
   try {
     const code = await provider.getCode(address)
@@ -85,7 +85,7 @@ export async function validateContract(chain: string, address: string): Promise<
   return false
 }
 
-export function privateKeyToWalletAddress(privateKey: string): string | undefined {
+export function privateKeyToWalletAddress (privateKey: string): string | undefined {
   try {
     return new Wallet(privateKey).address
   } catch (error) {}

@@ -1,11 +1,12 @@
 import logo from './logo.png'
 import { NavLink } from 'react-router-dom'
-import { WalletIcon, ForwardIcon } from '@heroicons/react/24/outline'
 import { classNames } from '../../utils'
+import { type HeaderMenuItem } from '../../types'
+import { ForwardIcon, UserIcon } from '@heroicons/react/24/outline'
 
-const navigation = [
-  { name: 'Wallets', href: 'wallets', icon: WalletIcon, current: false },
-  { name: 'Sender', href: 'sender', icon: ForwardIcon, current: false }
+export const menu: HeaderMenuItem[] = [
+  { name: 'Account Manager', href: 'accounts', icon: UserIcon },
+  { name: 'Tools', href: 'sender', icon: ForwardIcon }
 ]
 
 export function Sidebar (): JSX.Element {
@@ -18,7 +19,7 @@ export function Sidebar (): JSX.Element {
         <ul role='list' className='flex flex-1 flex-col gap-y-7'>
           <li>
             <ul role='list' className='-mx-2 space-y-1'>
-              {navigation.map((item) => (
+              {menu.map((item) => (
                 <li key={item.name}>
                   <NavLink
                     to={item.href}

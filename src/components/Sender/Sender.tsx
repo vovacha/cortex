@@ -1,13 +1,13 @@
 import { message } from '@tauri-apps/api/dialog'
-
 import { useSelector, useDispatch } from 'react-redux'
 import { useState } from 'react'
 
 import { openReadTextFile } from '../../utils'
 import { chainNames, validateContract, sendNativeCurrency, sendToken } from '../../web3/sender'
-import { type Wallet, type WalletWithTargetAddress } from '../../types'
+import type { Wallet, WalletWithTargetAddress } from '../../types'
 
 import { Button } from '../../shared-components/Button'
+import { Header } from '../../shared-components/Header'
 import { addAddresses } from '../../store/addresses/store'
 import type { RootState } from '../../store/store'
 import { logger } from '../../store/logger/store'
@@ -59,7 +59,7 @@ export default function Wallets (): JSX.Element {
     } else {
       const eol = data.includes('\r\n') ? '\r\n' : '\n'
       const addresses = data.split(eol)
-      dispatch(addAddresses(await getTargetAddresses(addresses, wallets)))
+      dispatch(addAddresses(await getTargetAddresses(addresses, wallets.wallets)))
       log(`Target wallet addresses were loaded: ${addresses.length}`)
     }
   }
@@ -93,7 +93,8 @@ export default function Wallets (): JSX.Element {
     log('Finished Sender')
   }
 
-  return (
+  return (<>
+    <Header/>
     <main className='lg:pr-96'>
       <div className='space-y-12 m-5'>
         <div className='border-b border-white/10 pb-6'>
@@ -223,5 +224,6 @@ export default function Wallets (): JSX.Element {
         </div>
       </div>
     </main>
+    </>
   )
 }

@@ -1,11 +1,19 @@
 import { open } from '@tauri-apps/api/dialog'
 import { readTextFile } from '@tauri-apps/api/fs'
 import { Command } from '@tauri-apps/api/shell'
-// import { platform } from '@tauri-apps/api/os'
+import * as CryptoJs from 'crypto-js'
 
-// const platformName = await platform()
+export const encryptWithAES = (text: string): string => {
+  return CryptoJs.AES.encrypt(text, import.meta.env.VITE_PASSPHRASE).toString()
+}
 
-export function classNames(...classes: any): any {
+export const decryptWithAES = (ciphertext: string): string => {
+  const bytes = CryptoJS.AES.decrypt(ciphertext, import.meta.env.VITE_PASSPHRASE)
+  const originalText = bytes.toString(CryptoJS.enc.Utf8)
+  return originalText
+}
+
+export function classNames (...classes: any): any {
   return classes.filter(Boolean).join(' ')
 }
 

@@ -1,11 +1,6 @@
-// import { message } from '@tauri-apps/api/dialog'
 import { useSelector, useDispatch } from 'react-redux'
 import { useState } from 'react'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
-
-// import { openReadTextFile } from '../../utils'
-
-// import { logger } from '../../store/logger/store'
 import type { RootState } from '../../store/store'
 import { Button } from '../../shared-components/Button'
 import { Header } from '../../shared-components/Header'
@@ -15,6 +10,7 @@ import EditAccountModal from './EditAccountModal'
 import type { HeaderMenuItem, Account } from '../../types'
 import { clearAccounts } from '../../store/accounts/store'
 import { clearWallets } from '../../store/wallets/store'
+import { useAuth } from '../../hooks/useAuth'
 
 const menu: HeaderMenuItem[] = [
   { name: 'Accounts', href: '/accounts' },
@@ -24,6 +20,7 @@ const menu: HeaderMenuItem[] = [
 export default function Accounts (): JSX.Element {
   const [addAccountModal, setAddAccountModal] = useState(false)
   const [editAccountModal, setEditAccountModal] = useState<Account | undefined>()
+  const auth = useAuth()
   const accounts = useSelector((state: RootState) => state.accounts).accounts
   const dispatch = useDispatch()
 
@@ -90,6 +87,7 @@ export default function Accounts (): JSX.Element {
     <div className="fixed bottom-0 p-3">
         <Button onClick={() => { setAddAccountModal(true) }} text="Add Accounts" />
         <Button onClick={() => { clear() }} text="Clear All [DEBUG]" bg="bg-rose-600" />
+        <Button onClick={ auth.signOut } text="Sign Out [DEBUG]" bg="bg-rose-600" />
     </div>
     </>
   )

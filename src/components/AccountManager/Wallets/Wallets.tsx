@@ -2,23 +2,19 @@ import { message } from '@tauri-apps/api/dialog'
 import { useSelector, useDispatch } from 'react-redux'
 import { useState } from 'react'
 
-import { openReadTextFile, encryptWithAES } from '../../utils'
-import { privateKeyToWalletAddress } from '../../web3'
+import { openReadTextFile, encryptWithAES } from '../../../utils'
+import { privateKeyToWalletAddress } from '../../../web3'
 
-import { logger } from '../../store/logger/store'
-import { createWallet } from '../../store/wallets/store'
-import type { RootState } from '../../store/store'
-import { Modal } from '../../shared-components/Modal'
+import { logger } from '../../../store/logger/store'
+import { createWallet } from '../../../store/wallets/store'
+import type { RootState } from '../../../store/store'
+import { Modal } from '../../../shared-components/Modal'
 
-import type { HeaderMenuItem, BaseWallet } from '../../types'
-import { Button } from '../../shared-components/Button'
-import { Header } from '../../shared-components/Header'
+import type { BaseWallet } from '../../../types'
+import { Button } from '../../../shared-components/Button'
+import { Header } from '../../../shared-components/Header'
 import GenerateWalletsModal from './GenerateWalletsModal'
-
-const menu: HeaderMenuItem[] = [
-  { name: 'Accounts', href: '/accounts' },
-  { name: 'EVM Wallets', href: '/wallets' }
-]
+import { accountManagerMenu as menu } from '../../../main'
 
 async function getWallets (pkeys: string[]): Promise<BaseWallet[]> {
   const errorKeys: string[] = []
@@ -67,7 +63,8 @@ export default function Wallets (): JSX.Element {
 
   return (<>
     <Header menu={menu}/>
-    <main className='lg:pr-96'>
+    {/* <main className='lg:pr-96'> */}
+    <main className=''>
       <div className='bg-gray-900'>
         <div className='mx-auto max-w-7xl'>
             <div className='px-4 sm:px-6 lg:px-8'>
@@ -106,7 +103,7 @@ export default function Wallets (): JSX.Element {
       </div>
     </main>
     <Modal openModal={openModal} setOpenModal={setOpenModal} Content={ GenerateWalletsModal } />
-    <div className="fixed bottom-0 p-3">
+    <div className="fixed bottom-0 p-6">
       <Button onClick={() => { void readWalletsFromFile() }} text='Import private keys' />
       <Button onClick={() => { setOpenModal(true) }} text='Generate wallets' />
     </div>

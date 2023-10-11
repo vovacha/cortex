@@ -1,6 +1,4 @@
 import { Outlet } from 'react-router-dom'
-
-import { Activity } from '../Activity'
 import { Sidebar, SidebarTransition } from '../Sidebar'
 
 function Layout (): JSX.Element {
@@ -15,7 +13,6 @@ function Layout (): JSX.Element {
 
       <div className='xl:pl-72'>
         <Outlet />
-        <Activity />
       </div>
     </div>
   )

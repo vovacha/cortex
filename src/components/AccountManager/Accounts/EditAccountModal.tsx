@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import type { RootState } from '../../store/store'
+import type { RootState } from '../../../store/store'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button } from '../../shared-components/Button'
-import { updateEvmWallet, updateName } from '../../store/accounts/store'
-import type { Account } from '../../types'
+import { Button } from '../../../shared-components/Button'
+import { updateEvmWallet, updateName } from '../../../store/accounts/store'
+import type { Account } from '../../../types'
 
 interface ModalProps {
   openModal: any

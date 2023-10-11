@@ -2,15 +2,17 @@ import { message } from '@tauri-apps/api/dialog'
 import { useSelector, useDispatch } from 'react-redux'
 import { useState } from 'react'
 
-import { openReadTextFile } from '../../utils'
-import { chainNames, validateContract, sendNativeCurrency, sendToken } from '../../web3/sender'
-import type { Wallet, WalletWithTargetAddress } from '../../types'
+import { openReadTextFile } from '../../../utils'
+import { chainNames, validateContract, sendNativeCurrency, sendToken } from '../../../web3/sender'
+import type { Wallet, WalletWithTargetAddress } from '../../../types'
 
-import { Button } from '../../shared-components/Button'
-import { Header } from '../../shared-components/Header'
-import { addAddresses } from '../../store/addresses/store'
-import type { RootState } from '../../store/store'
-import { logger } from '../../store/logger/store'
+import { Button } from '../../../shared-components/Button'
+import { Header } from '../../../shared-components/Header'
+import { addAddresses } from '../../../store/addresses/store'
+import type { RootState } from '../../../store/store'
+import { logger } from '../../../store/logger/store'
+import { Activity } from '../../Activity'
+import { toolsMenu as menu } from '../../../main'
 
 async function getTargetAddresses (targetAddresses: string[], wallets: Wallet[]): Promise<WalletWithTargetAddress[]> {
   if (targetAddresses.length !== wallets.length) {
@@ -52,6 +54,7 @@ export default function Wallets (): JSX.Element {
     dispatch(logger({ message, date: new Date() }))
   }
 
+  // TODO: move this to a separate file
   async function readWalletAddressesFromFile (): Promise<void> {
     const data = await openReadTextFile()
     if (data === undefined) {
@@ -64,6 +67,7 @@ export default function Wallets (): JSX.Element {
     }
   }
 
+  // TODO: move this to a separate file
   async function send (): Promise<void> {
     const isValid = await validateContract(network, contract)
     const waitAfterTransaction = 1000
@@ -94,7 +98,7 @@ export default function Wallets (): JSX.Element {
   }
 
   return (<>
-    <Header/>
+    <Header menu={menu}/>
     <main className='lg:pr-96'>
       <div className='space-y-12 m-5'>
         <div className='border-b border-white/10 pb-6'>
@@ -224,6 +228,7 @@ export default function Wallets (): JSX.Element {
         </div>
       </div>
     </main>
+    <Activity/>
     </>
   )
 }

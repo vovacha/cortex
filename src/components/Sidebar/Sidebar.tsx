@@ -2,18 +2,19 @@ import logo from './logo.png'
 import { NavLink } from 'react-router-dom'
 import { classNames } from '../../utils'
 import { type HeaderMenuItem } from '../../types'
-import { ForwardIcon, UserIcon } from '@heroicons/react/24/outline'
+import { UserIcon, BriefcaseIcon, Cog8ToothIcon } from '@heroicons/react/24/outline'
 
 export const menu: HeaderMenuItem[] = [
-  { name: 'Account Manager', href: 'accounts', icon: UserIcon },
-  { name: 'Tools', href: 'sender', icon: ForwardIcon }
+  { name: 'Account Manager', href: 'account-manager', icon: UserIcon },
+  { name: 'Tools', href: 'tools', icon: BriefcaseIcon },
+  { name: 'Settings', href: 'settings', icon: Cog8ToothIcon }
 ]
 
 export function Sidebar (): JSX.Element {
   return (
     <>
       <div className='flex h-16 shrink-0 items-center'>
-        <img className='h-8 w-auto' src={logo} alt='ELRMCF' />
+        <img className='h-8 w-auto' src={logo} alt='Concierge' />
       </div>
       <nav className='flex flex-1 flex-col'>
         <ul role='list' className='flex flex-1 flex-col gap-y-7'>

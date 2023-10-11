@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { Button } from '../../shared-components/Button'
-import { createWallet } from '../../store/wallets/store'
-import type { BaseWallet } from '../../types'
-import { generateWallet } from '../../web3'
-import { encryptWithAES } from '../../utils'
+import { Button } from '../../../shared-components/Button'
+import { createWallet } from '../../../store/wallets/store'
+import type { BaseWallet } from '../../../types'
+import { generateWallet } from '../../../web3'
+import { encryptWithAES } from '../../../utils'
 
 interface ModalProps {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>

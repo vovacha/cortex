@@ -2,9 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Layout/Layout'
-import Sender from './components/Sender/Sender'
-import Accounts from './components/Accounts/Accounts'
-import Wallets from './components/Wallets/Wallets'
+import Sender from './components/Tools/Sender/Sender'
+import Accounts from './components/AccountManager/Accounts/Accounts'
+import Wallets from './components/AccountManager/Wallets/Wallets'
 import SignIn from './components/SignIn/SignIn'
 import PrivateRoute from './shared-components/PrivateRoute/PrivateRoute'
 import './index.css'
@@ -13,7 +13,25 @@ import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 import { ProvideAuth } from './hooks/useAuth'
 import SignUp from './components/SignUp/SignUp'
+import IndexPage from './shared-components/IndexPage/IndexPage'
 import ConfirmSignUp from './components/SignUp/ConfirmSignUp'
+import GeneralSettings from './components/Settings/GeneralSettings/GeneralSettings'
+import ExchangesSettings from './components/Settings/ExchangesSettings/ExchangesSettings'
+import type { HeaderMenuItem } from './types'
+
+export const accountManagerMenu: HeaderMenuItem[] = [
+  { name: 'Accounts', href: '/account-manager/accounts' },
+  { name: 'EVM Wallets', href: '/account-manager/wallets' }
+]
+
+export const toolsMenu: HeaderMenuItem[] = [
+  { name: 'Sender', href: '/tools/sender' }
+]
+
+export const settingsMenu: HeaderMenuItem[] = [
+  { name: 'General', href: '/settings/general' },
+  { name: 'Okx', href: '/settings/exchanges' }
+]
 
 const router = createBrowserRouter([
   {
@@ -33,16 +51,51 @@ const router = createBrowserRouter([
     element: <PrivateRoute><Layout /></PrivateRoute>,
     children: [
       {
-        path: 'accounts',
-        element: <Accounts />
+        path: '/account-manager/*',
+        children: [
+          {
+            index: true,
+            element: <IndexPage to='/account-manager/accounts' />
+          },
+          {
+            path: 'accounts',
+            element: <Accounts />
+          },
+          {
+            path: 'wallets',
+            element: <Wallets />
+          }
+        ]
       },
       {
-        path: 'wallets',
-        element: <Wallets />
+        path: '/tools/*',
+        children: [
+          {
+            index: true,
+            element: <IndexPage to='/tools/sender' />
+          },
+          {
+            path: 'sender',
+            element: <Sender />
+          }
+        ]
       },
       {
-        path: 'sender',
-        element: <Sender />
+        path: '/settings/*',
+        children: [
+          {
+            index: true,
+            element: <IndexPage to='/settings/general' />
+          },
+          {
+            path: 'general',
+            element: <GeneralSettings />
+          },
+          {
+            path: 'exchanges',
+            element: <ExchangesSettings />
+          }
+        ]
       }
     ]
   }

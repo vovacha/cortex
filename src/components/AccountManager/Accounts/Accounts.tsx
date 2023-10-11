@@ -1,21 +1,17 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { useState } from 'react'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
-import type { RootState } from '../../store/store'
-import { Button } from '../../shared-components/Button'
-import { Header } from '../../shared-components/Header'
-import { Modal } from '../../shared-components/Modal'
+import type { RootState } from '../../../store/store'
+import { Button } from '../../../shared-components/Button'
+import { Header } from '../../../shared-components/Header'
+import { Modal } from '../../../shared-components/Modal'
 import CreateAccountsModal from './CreateAccountsModal'
 import EditAccountModal from './EditAccountModal'
-import type { HeaderMenuItem, Account } from '../../types'
-import { clearAccounts } from '../../store/accounts/store'
-import { clearWallets } from '../../store/wallets/store'
-import { useAuth } from '../../hooks/useAuth'
-
-const menu: HeaderMenuItem[] = [
-  { name: 'Accounts', href: '/accounts' },
-  { name: 'EVM Wallets', href: '/wallets' }
-]
+import type { Account } from '../../../types'
+import { clearAccounts } from '../../../store/accounts/store'
+import { clearWallets } from '../../../store/wallets/store'
+import { useAuth } from '../../../hooks/useAuth'
+import { accountManagerMenu as menu } from '../../../main'
 
 export default function Accounts (): JSX.Element {
   const [addAccountModal, setAddAccountModal] = useState(false)
@@ -23,6 +19,7 @@ export default function Accounts (): JSX.Element {
   const auth = useAuth()
   const accounts = useSelector((state: RootState) => state.accounts).accounts
   const dispatch = useDispatch()
+  const isDevelopment = import.meta.env.VITE_DEVELOPMENT === 'true'
 
   function clear (): void {
     dispatch(clearAccounts())
@@ -31,7 +28,8 @@ export default function Accounts (): JSX.Element {
 
   return (<>
     <Header menu={menu}/>
-    <main className='lg:pr-96'>
+    {/* <main className='lg:pr-96'> */}
+    <main className=''>
       <div className='bg-gray-900'>
         <div className='mx-auto max-w-7xl'>
             <div className='px-4 sm:px-6 lg:px-8'>
@@ -84,10 +82,13 @@ export default function Accounts (): JSX.Element {
     </main>
     <Modal openModal={addAccountModal} setOpenModal={setAddAccountModal} Content={ CreateAccountsModal } />
     <Modal openModal={editAccountModal} setOpenModal={setEditAccountModal} Content={ EditAccountModal } />
-    <div className="fixed bottom-0 p-3">
+    <div className="fixed bottom-0 p-6">
         <Button onClick={() => { setAddAccountModal(true) }} text="Add Accounts" />
-        <Button onClick={() => { clear() }} text="Clear All [DEBUG]" bg="bg-rose-600" />
-        <Button onClick={ auth.signOut } text="Sign Out [DEBUG]" bg="bg-rose-600" />
+        {(isDevelopment)
+          ? <><Button onClick={() => { clear() }} text="Clear Accounts" bg="bg-rose-600" />
+            <Button onClick={ auth.signOut } text="Sign Out" bg="bg-rose-600" /></>
+          : null
+        }
     </div>
     </>
   )

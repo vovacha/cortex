@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { Button } from '../../shared-components/Button'
-import { createAccount } from '../../store/accounts/store'
+import { Button } from '../../../shared-components/Button'
+import { createAccount } from '../../../store/accounts/store'
 
 interface CreateAccountsModalProps {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>

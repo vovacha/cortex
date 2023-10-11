@@ -1,8 +1,7 @@
 import { Outlet } from 'react-router-dom'
 
 import { Activity } from '../Activity'
-import { Sidebar } from '../Sidebar'
-import { SidebarTransition } from '../SidebarTransition'
+import { Sidebar, SidebarTransition } from '../Sidebar'
 
 function Layout (): JSX.Element {
   return (

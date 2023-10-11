@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Layout/Layout'
-// import ErrorPage from './components/ErrorPage/ErrorPage'
 import Sender from './components/Sender/Sender'
 import Accounts from './components/Accounts/Accounts'
 import Wallets from './components/Wallets/Wallets'
@@ -13,6 +12,8 @@ import { store, persistor } from './store/store'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 import { ProvideAuth } from './hooks/useAuth'
+import SignUp from './components/SignUp/SignUp'
+import ConfirmSignUp from './components/SignUp/ConfirmSignUp'
 
 const router = createBrowserRouter([
   {
@@ -20,9 +21,16 @@ const router = createBrowserRouter([
     element: <SignIn />
   },
   {
+    path: '/signup',
+    element: <SignUp />
+  },
+  {
+    path: '/confirm-signup',
+    element: <ConfirmSignUp />
+  },
+  {
     path: '/',
     element: <PrivateRoute><Layout /></PrivateRoute>,
-    // errorElement: <ErrorPage />,
     children: [
       {
         path: 'accounts',

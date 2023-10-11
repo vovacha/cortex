@@ -1,4 +1,3 @@
-// https://dev.to/aws-builders/how-to-use-amazon-cognito-with-reacttypescript-4elj
 import { Amplify, Auth } from 'aws-amplify'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { AwsConfigAuth } from '../auth.conf'
@@ -11,6 +10,8 @@ interface UseAuth {
   username: string
   signIn: (username: string, password: string) => Promise<Result>
   signOut: () => Promise<Result>
+  signUp: (username: string, password: string) => Promise<Result>
+  confirmSignUp: (username: string, code: string) => Promise<Result>
 }
 
 interface Result {
@@ -20,14 +21,14 @@ interface Result {
 
 interface Props {
   children?: React.ReactNode
-};
+}
 
 const authContext = createContext<UseAuth | null>(null)
 
 export const ProvideAuth: React.FC<Props> = ({ children }) => {
   const auth = useProvideAuth()
   return <authContext.Provider value={auth}>{children}</authContext.Provider>
-};
+}
 
 export const useAuth: any = () => {
   return useContext(authContext)
@@ -66,6 +67,43 @@ const useProvideAuth = (): UseAuth => {
     }
   }
 
+  const signUp = async (username: string, password: string): Promise<Result> => {
+    try {
+      await Auth.signUp({ username, password, attributes: { email: username } })
+        .then((result) => {
+          setUsername(username)
+          console.log(result)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      return { success: true, message: '' }
+    } catch (error) {
+      return {
+        success: false,
+        message: 'SIGNUP FAIL'
+      }
+    }
+  }
+
+  const confirmSignUp = async (code: string): Promise<Result> => {
+    try {
+      await Auth.confirmSignUp(username, code)
+        .then((result) => {
+          console.log(result)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      return { success: true, message: '' }
+    } catch (error) {
+      return {
+        success: false,
+        message: 'CONFIRM SIGNUP FAIL'
+      }
+    }
+  }
+
   const signOut = async (): Promise<Result> => {
     try {
       await Auth.signOut()
@@ -85,6 +123,8 @@ const useProvideAuth = (): UseAuth => {
     isAuthenticated,
     username,
     signIn,
-    signOut
+    signOut,
+    signUp,
+    confirmSignUp
   }
 }

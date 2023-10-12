@@ -1,4 +1,4 @@
-import { Header } from '../../../shared-components/Header'
+import { Header } from '../../../shared-components'
 import { settingsMenu as menu } from '../../../main'
 
 export default function GeneralSettings (): JSX.Element {

@@ -8,11 +8,9 @@ import { privateKeyToWalletAddress } from '../../../web3'
 import { logger } from '../../../store/logger/store'
 import { createWallet } from '../../../store/wallets/store'
 import type { RootState } from '../../../store/store'
-import { Modal } from '../../../shared-components/Modal'
+import { Modal, Button, Header } from '../../../shared-components'
 
 import type { BaseWallet } from '../../../types'
-import { Button } from '../../../shared-components/Button'
-import { Header } from '../../../shared-components/Header'
 import GenerateWalletsModal from './GenerateWalletsModal'
 import { accountManagerMenu as menu } from '../../../main'
 

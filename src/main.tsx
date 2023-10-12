@@ -16,8 +16,12 @@ import SignUp from './components/SignUp/SignUp'
 import IndexPage from './shared-components/IndexPage/IndexPage'
 import ConfirmSignUp from './components/SignUp/ConfirmSignUp'
 import GeneralSettings from './components/Settings/GeneralSettings/GeneralSettings'
-import ExchangesSettings from './components/Settings/ExchangesSettings/ExchangesSettings'
+import Exchanges from './components/Settings/Exchanges/Exchanges'
 import type { HeaderMenuItem } from './types'
+import { appWindow, LogicalSize } from '@tauri-apps/api/window'
+
+// TODO: move this to the settings
+await appWindow.setSize(new LogicalSize(1400, 800))
 
 export const accountManagerMenu: HeaderMenuItem[] = [
   { name: 'Accounts', href: '/account-manager/accounts' },
@@ -30,7 +34,7 @@ export const toolsMenu: HeaderMenuItem[] = [
 
 export const settingsMenu: HeaderMenuItem[] = [
   { name: 'General', href: '/settings/general' },
-  { name: 'Okx', href: '/settings/exchanges' }
+  { name: 'CEX', href: '/settings/exchanges' }
 ]
 
 const router = createBrowserRouter([
@@ -93,7 +97,7 @@ const router = createBrowserRouter([
           },
           {
             path: 'exchanges',
-            element: <ExchangesSettings />
+            element: <Exchanges />
           }
         ]
       }

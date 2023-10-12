@@ -3,30 +3,19 @@ import { useState } from 'react'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
 import type { RootState } from '../../../store/store'
 import { Button, Header, Modal } from '../../../shared-components'
-import CreateAccountsModal from './CreateAccountsModal'
-import EditAccountModal from './EditAccountModal'
-import type { Account } from '../../../types'
-import { clearAccounts } from '../../../store/accounts/store'
-import { clearWallets } from '../../../store/wallets/store'
-import { useAuth } from '../../../hooks/useAuth'
-import { accountManagerMenu as menu } from '../../../main'
+import { clearKeys } from '../../../store/api-keys/store'
+import { settingsMenu as menu } from '../../../main'
+import { Exchanges as ExchangesEnum } from '../../../types'
+import CreateApiKeyModal from './CreateApiKeyModal'
 
-export default function Accounts (): JSX.Element {
-  const [addAccountModal, setAddAccountModal] = useState(false)
-  const [editAccountModal, setEditAccountModal] = useState<Account | undefined>()
-  const auth = useAuth()
-  const accounts = useSelector((state: RootState) => state.accounts).accounts
+export default function Exchanges (): JSX.Element {
+  const [addApiKeyModal, setAddApiKeyModal] = useState(false)
+  const apiKeys = useSelector((state: RootState) => state.apiKeys).keys
   const dispatch = useDispatch()
   const isDevelopment = import.meta.env.VITE_DEVELOPMENT === 'true'
 
-  function clear (): void {
-    dispatch(clearAccounts())
-    dispatch(clearWallets())
-  }
-
   return (<>
     <Header menu={menu}/>
-    {/* <main className='lg:pr-96'> */}
     <main className=''>
       <div className='bg-gray-900'>
         <div className='mx-auto max-w-7xl'>
@@ -34,7 +23,7 @@ export default function Accounts (): JSX.Element {
               <div className='mt-8 flow-root'>
                 <div className='-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
                   <div className='inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8'>
-                    {(accounts.length > 0)
+                    {(apiKeys.length > 0)
                       ? (
                       <table className='min-w-full divide-y divide-gray-700'>
                         <thead>
@@ -46,24 +35,24 @@ export default function Accounts (): JSX.Element {
                               Name
                             </th>
                             <th scope='col' className='px-3 py-3.5 text-left text-sm font-semibold text-white'>
-                              EVM Wallet
+                              Exchange
                             </th>
                             <th scope='col' className='px-3 py-3.5 text-left text-sm font-semibold text-white'>
-                              Starknet Wallet
+                              API Key
                             </th>
                             <th scope='col' className='px-3 py-3.5 text-left text-sm font-semibold text-white'>
                             </th>
                           </tr>
                         </thead>
                         <tbody className='divide-y divide-gray-800'>
-                          {accounts.map((account, i) => (
+                          {apiKeys.map((key, i) => (
                             <tr key={i}>
                               <td className='whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-white sm:pl-0'>{i + 1}</td>
-                              <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>{account.name}</td>
-                              <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>{account.evmWallet ?? '-'}</td>
-                              <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>-</td>
+                              <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>{key.name}</td>
+                              <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>{ExchangesEnum[key.exchange]}</td>
+                              <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>{key.apiKey}</td>
                               <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
-                                <a className='cursor-pointer' onClick={() => { setEditAccountModal(account) }}>
+                                <a className='cursor-pointer' onClick={() => { }}>
                                   <PencilSquareIcon className='h-6 w-6 shrink-0' aria-hidden='true' />
                                 </a>
                               </td>
@@ -80,13 +69,11 @@ export default function Accounts (): JSX.Element {
         </div>
       </div>
     </main>
-    <Modal openModal={addAccountModal} setOpenModal={setAddAccountModal} Content={ CreateAccountsModal } />
-    <Modal openModal={editAccountModal} setOpenModal={setEditAccountModal} Content={ EditAccountModal } />
+    <Modal openModal={addApiKeyModal} setOpenModal={setAddApiKeyModal} Content={ CreateApiKeyModal } />
     <div className="fixed bottom-0 p-6">
-        <Button onClick={() => { setAddAccountModal(true) }} text="Add Accounts" />
+        <Button onClick={() => { setAddApiKeyModal(true) }} text="Add API Key" />
         {(isDevelopment)
-          ? <><Button onClick={() => { clear() }} text="Clear Accounts" bg="bg-rose-600" />
-            <Button onClick={ auth.signOut } text="Sign Out" bg="bg-rose-600" /></>
+          ? <Button onClick={() => { dispatch(clearKeys()) }} text="Clear API Keys" bg="bg-rose-600" />
           : null
         }
     </div>

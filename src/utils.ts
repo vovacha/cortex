@@ -13,6 +13,10 @@ export const decryptWithAES = (ciphertext: string): string => {
   return originalText
 }
 
+export function enumKeys (obj: any): string[] {
+  return Object.keys(obj).filter(k => !Number.isNaN(Number(k)))
+}
+
 export function classNames (...classes: any): any {
   return classes.filter(Boolean).join(' ')
 }

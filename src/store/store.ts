@@ -4,6 +4,7 @@ import walletsReducer from './wallets/store'
 import addressesReducer from './addresses/store'
 import sidebarReducer from './sidebar/store'
 import accountsReducer from './accounts/store'
+import apiKeysReducer from './api-keys/store'
 import storage from 'redux-persist/lib/storage'
 import { persistReducer, persistStore } from 'redux-persist'
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2'
@@ -21,7 +22,8 @@ const rootReducer = combineReducers({
   wallets: walletsReducer,
   addresses: addressesReducer,
   sidebar: sidebarReducer,
-  accounts: accountsReducer
+  accounts: accountsReducer,
+  apiKeys: apiKeysReducer
 })
 
 // https://stackoverflow.com/questions/65606288/typescript-reduxjs-toolkit-reducer-generated-by-createslice-is-not-assignable

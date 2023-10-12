@@ -49,3 +49,30 @@ export interface HeaderMenuItem {
   href: string
   icon?: any
 }
+
+export interface BaseApiKey {
+  name: string
+  apiKey: string
+  secretKey: string
+  passphrase: string
+  exchange: Exchanges
+}
+
+export interface ApiKey {
+  id: number
+  name: string
+  apiKey: string
+  secretKey: string
+  passphrase: string
+  exchange: Exchanges
+}
+
+export interface ApiKeysState {
+  count: number
+  keys: ApiKey[]
+}
+
+export enum Exchanges {
+  OKX,
+  Binance,
+}

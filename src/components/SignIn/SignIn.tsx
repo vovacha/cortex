@@ -13,7 +13,7 @@ export default function SignIn (): JSX.Element {
     event.preventDefault()
     const result = await auth.signIn(username, password)
     if (result.success === true) {
-      navigate({ pathname: '/accounts' })
+      navigate({ pathname: '/accounts-manager/accounts' })
     } else {
       await message(result.message)
     }
@@ -22,6 +22,7 @@ export default function SignIn (): JSX.Element {
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          {/* TODO: change the logo */}
           <img
             className="mx-auto h-10 w-auto"
             src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"

@@ -47,7 +47,9 @@ export interface TransactionReceipt {
 export interface HeaderMenuItem {
   name: string
   href: string
+  children?: HeaderMenuItem[]
   icon?: any
+  current?: boolean
 }
 
 export interface BaseApiKey {

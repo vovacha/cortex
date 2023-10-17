@@ -1,9 +1,9 @@
-import { useAuth } from '../../hooks/useAuth'
 import { useState } from 'react'
 import { useNavigate, NavLink } from 'react-router-dom'
 import { message } from '@tauri-apps/api/dialog'
+import { useAuth } from '../../hooks/useAuth'
 
-export default function SignIn (): JSX.Element {
+export function SignIn (): JSX.Element {
   const auth = useAuth()
   const navigate = useNavigate()
   const [username, setUsername] = useState('')

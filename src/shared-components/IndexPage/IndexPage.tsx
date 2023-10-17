@@ -4,6 +4,6 @@ interface Props {
   to: string
 }
 
-export default function IndexPage ({ to }: Props): JSX.Element {
+export function IndexPage ({ to }: Props): JSX.Element {
   return <Navigate to={ to } />
 }

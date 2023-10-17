@@ -1,68 +1,22 @@
-import { message } from '@tauri-apps/api/dialog'
-import { useSelector, useDispatch } from 'react-redux'
 import { useState } from 'react'
-
-import { openReadTextFile, encryptWithAES } from '../../../utils'
-import { privateKeyToWalletAddress } from '../../../web3'
-
-import { logger } from '../../../store/logger/store'
-import { createWallet } from '../../../store/wallets/store'
-import type { RootState } from '../../../store/store'
 import { Modal, Button, Header } from '../../../shared-components'
-
-import type { BaseWallet } from '../../../types'
 import GenerateWalletsModal from './GenerateWalletsModal'
-import { accountManagerMenu as menu } from '../../../main'
+import { accountManagerMenu as menu } from '../../../routes'
+import { useGetWallets, useCreateWalletMut } from '../../../services/queries'
+import { readWalletsFromFile } from './readWalletsFromFile'
 
-async function getWallets (pkeys: string[]): Promise<BaseWallet[]> {
-  const errorKeys: string[] = []
-  const wallets: BaseWallet[] = []
-  pkeys.forEach((pkey) => {
-    const address = privateKeyToWalletAddress(pkey)
-    if (address === undefined) {
-      errorKeys.push(pkey)
-    } else {
-      wallets.push({ privateKey: encryptWithAES(pkey), address })
-    }
-  })
-  if (errorKeys.length > 0) {
-    let errorKeysStr = errorKeys.toString()
-    if (errorKeysStr.length > 100) {
-      errorKeysStr = errorKeysStr.substring(0, 100) + '...'
-    }
-    await message('Error while loading private keys', `One or multiple keys are invalid: ${errorKeysStr}`)
-    return []
-  }
-  return wallets
-}
-
-export default function Wallets (): JSX.Element {
+export function Wallets (): JSX.Element {
   const [openModal, setOpenModal] = useState(false)
-  const wallets = useSelector((state: RootState) => state.wallets).wallets
-  const dispatch = useDispatch()
+  const { data: wallets, error } = useGetWallets()
+  const createWallet = useCreateWalletMut()
 
-  function log (message: string): void {
-    dispatch(logger({ message, date: new Date() }))
-  }
-
-  async function readWalletsFromFile (): Promise<void> {
-    const data = await openReadTextFile()
-    if (data === undefined) {
-      await message('File is empty', 'No private keys found')
-    } else {
-      const eol = data.includes('\r\n') ? '\r\n' : '\n'
-      const keys = data.split(eol)
-      for (const w of await getWallets(keys)) {
-        dispatch(createWallet(w))
-      }
-      log(`Private keys were loaded: ${keys.length}`)
-    }
-  }
+  // TODO: handle loading and exceptions properly
+  if (wallets === undefined) { return <h1 color='white'>Loading</h1> }
+  if (error instanceof Error) { return <h1 color='white'>{error.message}</h1> }
 
   return (<>
     <Header menu={menu}/>
-    {/* <main className='lg:pr-96'> */}
-    <main className=''>
+    <main>
       <div className='bg-gray-900'>
         <div className='mx-auto max-w-7xl'>
             <div className='px-4 sm:px-6 lg:px-8'>
@@ -102,7 +56,17 @@ export default function Wallets (): JSX.Element {
     </main>
     <Modal openModal={openModal} setOpenModal={setOpenModal} Content={ GenerateWalletsModal } />
     <div className="fixed bottom-0 p-6">
-      <Button onClick={() => { void readWalletsFromFile() }} text='Import private keys' />
+      <Button
+      onClick={
+        () => {
+          void (async () => {
+            for (const wallet of await readWalletsFromFile()) {
+              await createWallet.mutateAsync(wallet)
+            }
+          })()
+        }
+      }
+      text='Import private keys' />
       <Button onClick={() => { setOpenModal(true) }} text='Generate wallets' />
     </div>
     </>

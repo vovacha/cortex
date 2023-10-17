@@ -1,7 +1,7 @@
 import { Header } from '../../../shared-components'
-import { settingsMenu as menu } from '../../../main'
+import { settingsMenu as menu } from '../../../routes'
 
-export default function GeneralSettings (): JSX.Element {
+export function GeneralSettings (): JSX.Element {
   return (<>
     <Header menu={menu}/>
     <main className=''>

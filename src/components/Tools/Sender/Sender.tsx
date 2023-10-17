@@ -1,17 +1,15 @@
 import { message } from '@tauri-apps/api/dialog'
-import { useSelector, useDispatch } from 'react-redux'
 import { useState } from 'react'
 
 import { openReadTextFile } from '../../../utils'
 import { chainNames, validateContract, sendNativeCurrency, sendToken } from '../../../web3/sender'
-import type { Wallet, WalletWithTargetAddress } from '../../../types'
+import type { Wallet, WalletWithTargetAddress } from '../../../interfaces'
 
 import { Button, Header } from '../../../shared-components'
-import { addAddresses } from '../../../store/addresses/store'
-import type { RootState } from '../../../store/store'
-import { logger } from '../../../store/logger/store'
-import { Activity } from '../../Activity'
-import { toolsMenu as menu } from '../../../main'
+import { Activity } from '../..'
+import { toolsMenu as menu } from '../../../routes'
+
+// TODO: refactor the whole module
 
 async function getTargetAddresses (targetAddresses: string[], wallets: Wallet[]): Promise<WalletWithTargetAddress[]> {
   if (targetAddresses.length !== wallets.length) {
@@ -40,17 +38,16 @@ async function sleep (milliseconds: number): Promise<void> {
   })
 }
 
-export default function Wallets (): JSX.Element {
+export function Sender (): JSX.Element {
   const [contract, setContract] = useState('')
   const [network, setNetwork] = useState('')
   const [amount, setAmount] = useState(0)
 
-  const targetAddresses = useSelector((state: RootState) => state.addresses)
-  const wallets = useSelector((state: RootState) => state.wallets)
-  const dispatch = useDispatch()
+  const targetAddresses: WalletWithTargetAddress[] = []
+  // const wallets: Wallet[] = []
 
   function log (message: string): void {
-    dispatch(logger({ message, date: new Date() }))
+    // dispatch(logger({ message, date: new Date() }))
   }
 
   // TODO: move this to a separate file
@@ -61,7 +58,7 @@ export default function Wallets (): JSX.Element {
     } else {
       const eol = data.includes('\r\n') ? '\r\n' : '\n'
       const addresses = data.split(eol)
-      dispatch(addAddresses(await getTargetAddresses(addresses, wallets.wallets)))
+      // dispatch(addAddresses(await getTargetAddresses(addresses, wallets.wallets)))
       log(`Target wallet addresses were loaded: ${addresses.length}`)
     }
   }

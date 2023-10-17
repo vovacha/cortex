@@ -1,24 +1,19 @@
+import { NavLink } from 'react-router-dom'
 import { Bars3Icon } from '@heroicons/react/20/solid'
 
-import { NavLink } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { showSidebar } from '../../store/sidebar/store'
-// import type { HeaderMenuItem } from '../../types'
 import { classNames } from '../../utils'
-// import { menu } from '../../components/Sidebar/Sidebar'
-
-import { type HeaderMenuItem } from '../../types'
+import { type HeaderMenuItem } from '../../interfaces'
 
 interface HeaderProps {
   menu?: HeaderMenuItem[]
 }
 
-export function Header ({ menu }: HeaderProps): JSX.Element {
-  const dispatch = useDispatch()
+// TODO: add state to the SidebarTransition and Header, currently transition doesn't work
 
+export function Header ({ menu }: HeaderProps): JSX.Element {
   return (
     <div className='sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-6 border-b border-white/5 bg-gray-900 px-4 shadow-sm sm:px-6 lg:px-8'>
-      <button type='button' className='-m-2.5 p-2.5 text-white xl:hidden' onClick={() => { dispatch(showSidebar({ value: true })) }}>
+      <button type='button' className='-m-2.5 p-2.5 text-white xl:hidden' onClick={() => { {/*dispatch(showSidebar({ value: true }))*/} }}>
         <span className='sr-only'>Open sidebar</span>
         <Bars3Icon className='h-5 w-5' aria-hidden='true' />
       </button>

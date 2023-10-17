@@ -1,9 +1,10 @@
-import logo from './logo.png'
 import { NavLink } from 'react-router-dom'
-import { classNames } from '../../utils'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { Disclosure } from '@headlessui/react'
-import { menu } from '../../main'
+
+import logo from './logo.png'
+import { classNames } from '../../utils'
+import { menu } from '../../routes'
 
 export function Sidebar (): JSX.Element {
   return (

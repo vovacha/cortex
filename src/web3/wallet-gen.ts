@@ -1,5 +1,5 @@
 import { Wallet as EthersWallet } from 'ethers'
-import type { BaseWallet } from '../types'
+import type { BaseWallet } from '../interfaces'
 
 export function generateWallet (): BaseWallet {
   const hdWallet = EthersWallet.createRandom()

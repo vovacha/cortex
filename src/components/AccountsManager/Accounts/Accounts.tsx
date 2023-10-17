@@ -1,29 +1,25 @@
-import { useSelector, useDispatch } from 'react-redux'
 import { useState } from 'react'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
-import type { RootState } from '../../../store/store'
-import { Button, Header, Modal } from '../../../shared-components'
-import CreateAccountsModal from './CreateAccountsModal'
-import EditAccountModal from './EditAccountModal'
-import type { Account } from '../../../types'
-import { clearAccounts } from '../../../store/accounts/store'
-import { clearWallets } from '../../../store/wallets/store'
-import { useAuth } from '../../../hooks/useAuth'
-import { accountManagerMenu as menu } from '../../../main'
 
-export default function Accounts (): JSX.Element {
+import { useAuth } from '../../../hooks/useAuth'
+import { accountManagerMenu as menu } from '../../../routes'
+import { Button, Header, Modal } from '../../../shared-components'
+import { CreateAccountsModal, EditAccountModal } from './index'
+import type { Account } from '../../../interfaces'
+import { useDeleteAccountsMut, useGetAccounts } from '../../../services/queries'
+
+export function Accounts (): JSX.Element {
   const [addAccountModal, setAddAccountModal] = useState(false)
   const [editAccountModal, setEditAccountModal] = useState<Account | undefined>()
   const auth = useAuth()
-  const accounts = useSelector((state: RootState) => state.accounts).accounts
-  const dispatch = useDispatch()
+  const deleteAllAccounts = useDeleteAccountsMut()
+  const { data: accounts, isLoading, error } = useGetAccounts()
+
+  // TODO: handle loading and exceptions properly
+  if (isLoading) { return <h1 color='white'>Loading</h1> }
+  if (error instanceof Error) { return <h1 color='white'>{error.message}</h1> }
+
   const isDevelopment = import.meta.env.VITE_DEVELOPMENT === 'true'
-
-  function clear (): void {
-    dispatch(clearAccounts())
-    dispatch(clearWallets())
-  }
-
   return (<>
     <Header menu={menu}/>
     {/* <main className='lg:pr-96'> */}
@@ -34,7 +30,7 @@ export default function Accounts (): JSX.Element {
               <div className='mt-8 flow-root'>
                 <div className='-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
                   <div className='inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8'>
-                    {(accounts.length > 0)
+                    {(Array.isArray(accounts) && accounts.length > 0)
                       ? (
                       <table className='min-w-full divide-y divide-gray-700'>
                         <thead>
@@ -85,7 +81,7 @@ export default function Accounts (): JSX.Element {
     <div className="fixed bottom-0 p-6">
         <Button onClick={() => { setAddAccountModal(true) }} text="Add Accounts" />
         {(isDevelopment)
-          ? <><Button onClick={() => { clear() }} text="Clear Accounts" bg="bg-rose-600" />
+          ? <><Button onClick={() => { deleteAllAccounts.mutate() }} text="Clear Accounts" bg="bg-rose-600" />
             <Button onClick={ auth.signOut } text="Sign Out" bg="bg-rose-600" /></>
           : null
         }

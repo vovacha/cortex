@@ -1,19 +1,21 @@
-import { useSelector, useDispatch } from 'react-redux'
 import { useState } from 'react'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
-import type { RootState } from '../../../store/store'
 import { Button, Header, Modal } from '../../../shared-components'
-import { clearKeys } from '../../../store/api-keys/store'
-import { settingsMenu as menu } from '../../../main'
-import { Exchanges as ExchangesEnum } from '../../../types'
+import { settingsMenu as menu } from '../../../routes'
+import { Exchanges as ExchangesEnum } from '../../../interfaces'
 import CreateApiKeyModal from './CreateApiKeyModal'
+import { useGetApiKeys, useDeleteApiKeysMut } from '../../../services/queries'
 
-export default function Exchanges (): JSX.Element {
+export function Exchanges (): JSX.Element {
   const [addApiKeyModal, setAddApiKeyModal] = useState(false)
-  const apiKeys = useSelector((state: RootState) => state.apiKeys).keys
-  const dispatch = useDispatch()
-  const isDevelopment = import.meta.env.VITE_DEVELOPMENT === 'true'
+  const deleteAllApiKeys = useDeleteApiKeysMut()
+  const { data: apiKeys, isLoading, error } = useGetApiKeys()
 
+  // TODO: handle loading and exceptions properly
+  if (isLoading) { return <h1 color='white'>Loading</h1> }
+  if (error instanceof Error) { return <h1 color='white'>{error.message}</h1> }
+
+  const isDevelopment = import.meta.env.VITE_DEVELOPMENT === 'true'
   return (<>
     <Header menu={menu}/>
     <main className=''>
@@ -23,7 +25,7 @@ export default function Exchanges (): JSX.Element {
               <div className='mt-8 flow-root'>
                 <div className='-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
                   <div className='inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8'>
-                    {(apiKeys.length > 0)
+                    {(Array.isArray(apiKeys) && apiKeys.length > 0)
                       ? (
                       <table className='min-w-full divide-y divide-gray-700'>
                         <thead>
@@ -73,7 +75,7 @@ export default function Exchanges (): JSX.Element {
     <div className="fixed bottom-0 p-6">
         <Button onClick={() => { setAddApiKeyModal(true) }} text="Add API Key" />
         {(isDevelopment)
-          ? <Button onClick={() => { dispatch(clearKeys()) }} text="Clear API Keys" bg="bg-rose-600" />
+          ? <Button onClick={() => { deleteAllApiKeys.mutate() }} text="Clear API Keys" bg="bg-rose-600" />
           : null
         }
     </div>

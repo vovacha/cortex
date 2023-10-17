@@ -1,6 +1,6 @@
 import { JsonRpcProvider, Wallet, Contract, formatUnits, parseUnits, parseEther } from 'ethers'
 
-import type { TransactionReceipt } from '../types'
+import type { TransactionReceipt } from '../interfaces'
 
 export const chainNames: any = {
   Ethereum: 'eth',

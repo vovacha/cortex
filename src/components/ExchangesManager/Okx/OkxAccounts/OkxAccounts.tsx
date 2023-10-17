@@ -1,7 +1,7 @@
 import { Header } from '../../../../shared-components'
-import { okxMenu as menu } from '../../../../main'
+import { okxMenu as menu } from '../../../../routes'
 
-export default function OkxAccounts (): JSX.Element {
+export function OkxAccounts (): JSX.Element {
   return (<>
     <Header menu={menu}/>
     <main className=''>

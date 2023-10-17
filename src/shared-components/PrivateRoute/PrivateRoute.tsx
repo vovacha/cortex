@@ -5,12 +5,10 @@ interface Props {
   children?: string | JSX.Element | JSX.Element[]
 }
 
-const PrivateRoute: React.FC<Props> = ({ children }: Props) => {
+export const PrivateRoute: React.FC<Props> = ({ children }: Props) => {
   const { isAuthenticated, isLoading } = useAuth()
   if (isLoading === true) {
     return <></>
   }
   return isAuthenticated === true ? children : <Navigate to='/signin' replace />
 }
-
-export default PrivateRoute

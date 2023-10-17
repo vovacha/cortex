@@ -1,7 +1,7 @@
 import { Header } from '../../../../shared-components'
-import { binanceMenu as menu } from '../../../../main'
+import { binanceMenu as menu } from '../../../../routes'
 
-export default function BinanceAccounts (): JSX.Element {
+export function BinanceAccounts (): JSX.Element {
   return (<>
     <Header menu={menu}/>
     <main className=''>

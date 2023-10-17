@@ -1,9 +1,7 @@
 import { useState } from 'react'
-import type { RootState } from '../../../store/store'
-import { useDispatch, useSelector } from 'react-redux'
+import type { Account, Wallet } from '../../../interfaces'
 import { Button, Input, Select } from '../../../shared-components'
-import { updateEvmWallet, updateName } from '../../../store/accounts/store'
-import type { Account } from '../../../types'
+import { useUpdateAccountMut, useGetWallets } from '../../../services/queries'
 
 interface Props {
   openModal: any
@@ -12,12 +10,17 @@ interface Props {
 
 const CHOOSE = 'Choose Wallet'
 
-export default function EditAccountModal ({ openModal, setOpenModal }: Props): JSX.Element {
+export function EditAccountModal ({ openModal, setOpenModal }: Props): JSX.Element {
   const [selectedWallet, setWallet] = useState(openModal.evmWallet ?? CHOOSE)
   const [selectedName, setAccountName] = useState(openModal.name)
-  const attachedEvmWallets = useSelector((state: RootState) => state.accounts).attachedEvmWallets
-  const wallets = useSelector((state: RootState) => state.wallets).wallets
-  const dispatch = useDispatch()
+  const updateAccount = useUpdateAccountMut()
+
+  const { error, data } = useGetWallets()
+  if (data === undefined) { return <h1 color='white'>Loading</h1> }
+  if (error instanceof Error) { return <h1 color='white'>{error.message}</h1> }
+
+  const wallets: Wallet[] = data
+  const attachedEvmWallets: string[] = []
   const selectedAccount = openModal
 
   function getWalletsOptions (): JSX.Element[] {
@@ -34,12 +37,9 @@ export default function EditAccountModal ({ openModal, setOpenModal }: Props): J
 
   function editAccount (): void {
     const selectedWalletAddress = selectedWallet === CHOOSE ? undefined : selectedWallet
-    if (selectedAccount.evmWallet !== selectedWalletAddress) {
-      dispatch(updateEvmWallet({ accountId: selectedAccount.id, wallet: selectedWalletAddress }))
-    }
-    if (selectedAccount.name !== selectedWallet) {
-      dispatch(updateName({ accountId: selectedAccount.id, name: selectedName }))
-    }
+    selectedAccount.evmWallet = selectedWalletAddress
+    selectedAccount.name = selectedName
+    updateAccount.mutate(selectedAccount)
     setOpenModal(false)
   }
   return <>

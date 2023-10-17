@@ -1,6 +1,6 @@
 import { Amplify, Auth } from 'aws-amplify'
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { AwsConfigAuth } from '../auth.conf'
+import { AwsConfigAuth } from './auth.conf'
 
 Amplify.configure({ Auth: AwsConfigAuth })
 

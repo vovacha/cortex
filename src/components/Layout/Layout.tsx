@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import { Sidebar, SidebarTransition } from '../Sidebar'
 
-function Layout (): JSX.Element {
+export function Layout (): JSX.Element {
   return (
     <div>
       <SidebarTransition />
@@ -17,5 +17,3 @@ function Layout (): JSX.Element {
     </div>
   )
 }
-
-export default Layout

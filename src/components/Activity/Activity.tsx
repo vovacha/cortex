@@ -1,10 +1,7 @@
-import { useSelector } from 'react-redux'
-
-import { type LogRecord } from '../../types'
-import type { RootState } from '../../store/store'
+import { type LogRecord } from '../../interfaces'
 
 export function Activity (): JSX.Element {
-  const logs = useSelector((state: RootState) => state.logger)
+  const logs: LogRecord[] = []
 
   return (
     <aside className='bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5'>

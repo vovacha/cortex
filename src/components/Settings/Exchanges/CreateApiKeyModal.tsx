@@ -1,9 +1,8 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { Button, Input, Select } from '../../../shared-components'
-import { createApiKey } from '../../../store/api-keys/store'
-import { Exchanges } from '../../../types'
+import { Exchanges } from '../../../interfaces'
 import { enumKeys } from '../../../utils'
+import { useCreateApiKeyMut } from '../../../services/queries'
 
 interface Props {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
@@ -15,7 +14,7 @@ export default function CreateApiKeyModal ({ setOpenModal }: Props): JSX.Element
   const [passphrase, setPassphrase] = useState('')
   const [name, setName] = useState('')
   const [exchange, setExchange] = useState(Exchanges.OKX)
-  const dispatch = useDispatch()
+  const createApiKey = useCreateApiKeyMut()
 
   function getOptions (): JSX.Element[] {
     const options: JSX.Element[] = []
@@ -27,7 +26,7 @@ export default function CreateApiKeyModal ({ setOpenModal }: Props): JSX.Element
 
   function apiKeyCreate (): void {
     if (exchange !== null) {
-      dispatch(createApiKey({ apiKey, secretKey, passphrase, name, exchange }))
+      createApiKey.mutate({ apiKey, secretKey, passphrase, name, exchange })
       setOpenModal(false)
     }
   }

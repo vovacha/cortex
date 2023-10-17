@@ -16,6 +16,7 @@ export function Input ({ name, value, type, setter }: Props): JSX.Element {
     <div className='mt-1'>
       <input
         onChange={(event) => { type === 'number' ? setter(Number(event.target.value)) : setter(event.target.value) }}
+        min={ type === 'number' ? 0 : undefined}
         value={value}
         type={elementType}
         name={id}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, NavLink } from 'react-router-dom'
 import { message } from '@tauri-apps/api/dialog'
+import logo from '../../logo.png'
 import { useAuth } from '../../hooks/useAuth'
 
 export function SignIn (): JSX.Element {
@@ -21,13 +22,8 @@ export function SignIn (): JSX.Element {
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <img className="mx-auto h-24 w-auto" src={logo} alt="Concierge"/>
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          {/* TODO: change the logo */}
-          <img
-            className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-            alt="Your Company"
-          />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
             Sign in to your account
           </h2>
@@ -59,9 +55,9 @@ export function SignIn (): JSX.Element {
                   Password
                 </label>
                 <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300">
-                    Forgot password? [TODO]
-                  </a>
+                  {/* <a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300">
+                    Forgot password?
+                  </a> */}
                 </div>
               </div>
               <div className="mt-2">

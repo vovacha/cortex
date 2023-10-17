@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { Disclosure } from '@headlessui/react'
 
-import logo from './logo.png'
+import logo from '../../logo.png'
 import { classNames } from '../../utils'
 import { menu } from '../../routes'
 

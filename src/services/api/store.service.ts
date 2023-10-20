@@ -1,5 +1,5 @@
-import type { Account, Wallet, ApiKey, HasId } from '../../interfaces'
-import { type BaseStore, accountStore, walletStore, apiKeyStore } from '../store/store'
+import type { Account, Group, Wallet, ApiKey, HasId } from '../../interfaces'
+import { type BaseStore, accountStore, accountGroupStore, walletStore, apiKeyStore } from '../store/store'
 
 // TODO: implement singleton factory method
 abstract class BaseStoreAPI<T extends HasId> {
@@ -35,9 +35,11 @@ abstract class BaseStoreAPI<T extends HasId> {
 }
 
 class AccountStoreAPI extends BaseStoreAPI <Account> { }
+class AccountGroupStoreAPI extends BaseStoreAPI <Group> { }
 class WalletStoreAPI extends BaseStoreAPI <Wallet> { }
 class ApiKeyStoreAPI extends BaseStoreAPI <ApiKey> { }
 
 export const accountStoreAPI = new AccountStoreAPI(accountStore)
+export const accountGroupStoreAPI = new AccountGroupStoreAPI(accountGroupStore)
 export const walletStoreAPI = new WalletStoreAPI(walletStore)
 export const apiKeyStoreAPI = new ApiKeyStoreAPI(apiKeyStore)

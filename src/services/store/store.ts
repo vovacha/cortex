@@ -1,11 +1,11 @@
 import { Store } from 'tauri-plugin-store-api'
 import { v4 as uuidv4 } from 'uuid'
-import type { Account, Wallet, ApiKey, HasId } from '../../interfaces'
+import type { Account, Group, Wallet, ApiKey, HasId } from '../../interfaces'
 
 // TODO: implement singleton factory method
-export class BaseStore<T extends HasId> {
-  private readonly listKey
-  private readonly store
+export abstract class BaseStore<T extends HasId> {
+  public readonly listKey
+  public readonly store
 
   constructor (listKey: string) {
     this.listKey = listKey
@@ -74,9 +74,11 @@ export class BaseStore<T extends HasId> {
 }
 
 class AccountStore extends BaseStore <Account> { }
+class AccountGroupStore extends BaseStore <Group> { }
 class WalletStore extends BaseStore <Wallet> { }
 class ApiKeyStore extends BaseStore <ApiKey> { }
 
 export const accountStore = new AccountStore('accounts')
+export const accountGroupStore = new AccountGroupStore('accountGroups')
 export const walletStore = new WalletStore('wallets')
 export const apiKeyStore = new ApiKeyStore('apiKeys')

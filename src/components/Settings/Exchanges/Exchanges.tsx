@@ -75,7 +75,7 @@ export function Exchanges (): JSX.Element {
     <div className="fixed bottom-0 p-6">
         <Button onClick={() => { setAddApiKeyModal(true) }} text="Add API Key" />
         {(isDevelopment)
-          ? <Button onClick={() => { deleteAllApiKeys.mutate() }} text="Clear API Keys" bg="bg-rose-600" />
+          ? <Button onClick={() => { deleteAllApiKeys.mutate() }} text="Clear API Keys" type="danger" />
           : null
         }
     </div>

@@ -25,6 +25,11 @@ export interface HasId {
   id: string
 }
 
+export interface Group {
+  id: string
+  name: string
+}
+
 export * from './accounts'
 export * from './exchanges'
 export * from './wallets'

@@ -2,13 +2,15 @@ import { useState } from 'react'
 import { Modal, Button, Header } from '../../../shared-components'
 import GenerateWalletsModal from './GenerateWalletsModal'
 import { accountManagerMenu as menu } from '../../../routes'
-import { useGetWallets, useCreateWalletMut } from '../../../services/queries'
+import { useGetWallets, useCreateWalletMut, useDeleteWalletMut } from '../../../services/queries'
 import { readWalletsFromFile } from './readWalletsFromFile'
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/solid'
 
 export function Wallets (): JSX.Element {
   const [openModal, setOpenModal] = useState(false)
   const { data: wallets, error } = useGetWallets()
   const createWallet = useCreateWalletMut()
+  const deleteWallet = useDeleteWalletMut()
 
   // TODO: handle loading and exceptions properly
   if (wallets === undefined) { return <h1 color='white'>Loading</h1> }
@@ -40,7 +42,13 @@ export function Wallets (): JSX.Element {
                           {wallets.map((wallet, i) => (
                             <tr key={wallet.address}>
                               <td className='whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-white sm:pl-0'>{i + 1}</td>
-                              <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>{wallet.address}</td>
+                              <td className='group relative whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
+                                <p className='absolute visible group-hover:invisible'>{wallet.address}</p>
+                                <div className=''>
+                                  <PencilSquareIcon onClick={() => { }} className='inline text-white hover:cursor-not-allowed invisible group-hover:visible h-4 w-4 shrink-0' aria-hidden='true' />
+                                  <TrashIcon onClick={() => { deleteWallet.mutate(wallet.id) }} className='inline ml-3 text-rose-600 hover:cursor-pointer invisible group-hover:visible h-4 w-4 shrink-0' aria-hidden='true' />
+                                </div>
+                              </td>
                             </tr>
                           ))}
                         </tbody>

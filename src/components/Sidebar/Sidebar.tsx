@@ -10,7 +10,7 @@ export function Sidebar (): JSX.Element {
   return (
     <>
       <div className='flex h-16 shrink-0 items-center'>
-        <img className='h-8 w-auto' src={logo} alt='Concierge' />
+        <img className='h-9 w-auto' src={logo} alt='Concierge' />
       </div>
       <nav className='flex flex-1 flex-col'>
         <ul role='list' className='flex flex-1 flex-col gap-y-7'>

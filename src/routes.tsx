@@ -25,7 +25,7 @@ export const menu: HeaderMenuItem[] = [
 
 // Sub-menus
 export const accountManagerMenu: HeaderMenuItem[] = [
-  { name: 'Accounts', href: '/accounts-manager/accounts' },
+  { name: 'Accounts', href: '/accounts-manager/accounts/all' },
   { name: 'EVM Wallets', href: '/accounts-manager/wallets' }
 ]
 export const okxMenu: HeaderMenuItem[] = [
@@ -54,8 +54,9 @@ export const router = createBrowserRouter([
       {
         path: '/accounts-manager/*',
         children: [
-          { index: true, element: <IndexPage to='/accounts-manager/accounts' /> },
-          { path: 'accounts', element: <Accounts /> },
+          { index: true, element: <IndexPage to='/accounts-manager/accounts/all' /> },
+          // { path: 'accounts', element: <Accounts /> },
+          { path: 'accounts/:groupId', element: <Accounts /> },
           { path: 'wallets', element: <Wallets /> }
         ]
       },

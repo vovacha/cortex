@@ -2,13 +2,16 @@ import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Sidebar } from '../Sidebar'
+import { useGetSidebarState, useSidebarStateMut } from '../../services/queries'
 
 // TODO: add state to the SidebarTransition and Header, currently transition doesn't work
 
 export function SidebarTransition (): JSX.Element {
+  const sidebarState = useSidebarStateMut()
+  const showSidebar = useGetSidebarState().data ?? false
   return (
-    <Transition.Root show={false} as={Fragment}>
-      <Dialog as='div' className='relative z-50 xl:hidden' onClose={() => { }}>
+    <Transition.Root show={showSidebar} as={Fragment}>
+      <Dialog as='div' className='relative z-50 xl:hidden' onClose={() => { sidebarState.mutate(false) }}>
         <Transition.Child
           as={Fragment}
           enter='transition-opacity ease-linear duration-300'
@@ -42,7 +45,7 @@ export function SidebarTransition (): JSX.Element {
                 leaveTo='opacity-0'
               >
                 <div className='absolute left-full top-0 flex w-16 justify-center pt-5'>
-                  <button type='button' className='-m-2.5 p-2.5' onClick={() => { }}>
+                  <button type='button' className='-m-2.5 p-2.5' onClick={() => { sidebarState.mutate(false) }}>
                     <span className='sr-only'>Close sidebar</span>
                     <XMarkIcon className='h-6 w-6 text-white' aria-hidden='true' />
                   </button>

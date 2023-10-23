@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, NavLink } from 'react-router-dom'
 import { message } from '@tauri-apps/api/dialog'
-import logo from '../../logo.png'
+import logo from '../../images/logo.png'
 import { useAuth } from '../../hooks/useAuth'
 
 export function SignIn (): JSX.Element {
@@ -14,7 +14,7 @@ export function SignIn (): JSX.Element {
     event.preventDefault()
     const result = await auth.signIn(username, password)
     if (result.success === true) {
-      navigate({ pathname: '/accounts-manager/accounts' })
+      navigate({ pathname: '/accounts-manager/accounts/all' })
     } else {
       await message(result.message)
     }

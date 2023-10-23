@@ -3,17 +3,19 @@ import { Bars3Icon } from '@heroicons/react/20/solid'
 
 import { classNames } from '../../utils'
 import { type HeaderMenuItem } from '../../interfaces'
+import { useSidebarStateMut } from '../../services/queries'
 
-interface HeaderProps {
+interface Props {
   menu?: HeaderMenuItem[]
 }
 
 // TODO: add state to the SidebarTransition and Header, currently transition doesn't work
 
-export function Header ({ menu }: HeaderProps): JSX.Element {
+export function Header ({ menu }: Props): JSX.Element {
+  const sidebarState = useSidebarStateMut()
   return (
     <div className='sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-6 border-b border-white/5 bg-gray-900 px-4 shadow-sm sm:px-6 lg:px-8'>
-      <button type='button' className='-m-2.5 p-2.5 text-white xl:hidden' onClick={() => { {/*dispatch(showSidebar({ value: true }))*/} }}>
+      <button type='button' className='-m-2.5 p-2.5 text-white xl:hidden' onClick={() => { sidebarState.mutate(true) }}>
         <span className='sr-only'>Open sidebar</span>
         <Bars3Icon className='h-5 w-5' aria-hidden='true' />
       </button>

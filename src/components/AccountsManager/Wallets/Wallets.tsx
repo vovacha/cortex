@@ -4,7 +4,6 @@ import GenerateWalletsModal from './GenerateWalletsModal'
 import { accountManagerMenu as menu } from '../../../routes'
 import { useGetWallets, useCreateWalletMut, useDeleteWalletMut } from '../../../services/queries'
 import { readWalletsFromFile } from './readWalletsFromFile'
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/solid'
 
 export function Wallets (): JSX.Element {
   const [openModal, setOpenModal] = useState(false)
@@ -40,14 +39,10 @@ export function Wallets (): JSX.Element {
                         </thead>
                         <tbody className='divide-y divide-gray-800'>
                           {wallets.map((wallet, i) => (
-                            <tr key={wallet.address}>
+                            <tr className='odd:bg-gray-900 even:bg-slate-900 hover:bg-slate-800' key={i}>
                               <td className='whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-white sm:pl-0'>{i + 1}</td>
                               <td className='group relative whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
-                                <p className='absolute visible group-hover:invisible'>{wallet.address}</p>
-                                <div className=''>
-                                  <PencilSquareIcon onClick={() => { }} className='inline text-white hover:cursor-not-allowed invisible group-hover:visible h-4 w-4 shrink-0' aria-hidden='true' />
-                                  <TrashIcon onClick={() => { deleteWallet.mutate(wallet.id) }} className='inline ml-3 text-rose-600 hover:cursor-pointer invisible group-hover:visible h-4 w-4 shrink-0' aria-hidden='true' />
-                                </div>
+                                {wallet.address}
                               </td>
                             </tr>
                           ))}
@@ -74,8 +69,9 @@ export function Wallets (): JSX.Element {
           })()
         }
       }
-      text='Import private keys' />
-      <Button onClick={() => { setOpenModal(true) }} text='Generate wallets' />
+      text='Import private keys'
+      classNames='mr-3 mb-3' />
+      <Button onClick={() => { setOpenModal(true) }} text='Generate wallets' classNames='mr-3 mb-3' />
     </div>
     </>
   )

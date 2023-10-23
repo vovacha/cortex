@@ -1,13 +1,18 @@
-interface ButtonProps {
+interface Props {
   onClick: () => void
   text: string | JSX.Element
   type?: string
+  classNames?: string
 }
 
-export function Button ({ onClick, text, type }: ButtonProps): JSX.Element {
-  const bgClass = type === 'danger' ? ['bg-rose-600', 'bg-rose-300'] : ['bg-indigo-600', 'bg-indigo-500']
-  const classNames = `rounded-md ${bgClass[0]} px-3 py-2 text-sm font-semibold text-white shadow-sm hover:${bgClass[1]} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mr-3`
+const buttonTypes: any = {
+  primary: 'rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500',
+  secondary: 'rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white/20',
+  danger: 'rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500'
+}
+
+export function Button ({ onClick, text, classNames, type = 'primary' }: Props): JSX.Element {
   return (
-    <button onClick={onClick} type='button' className={classNames}>{text}</button>
+    <button onClick={onClick} type='button' className={`${buttonTypes[type]} ${classNames}`}>{text}</button>
   )
 }

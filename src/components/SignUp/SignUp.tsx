@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, NavLink } from 'react-router-dom'
 import { message } from '@tauri-apps/api/dialog'
-import logo from '../../logo.png'
+import logo from '../../images/logo.png'
 import { useAuth } from '../../hooks/useAuth'
 
 export function SignUp (): JSX.Element {

@@ -4,6 +4,7 @@ import GenerateWalletsModal from './GenerateWalletsModal'
 import { accountManagerMenu as menu } from '../../../routes'
 import { useGetWallets, useCreateWalletMut, useDeleteWalletMut } from '../../../services/queries'
 import { readWalletsFromFile } from './readWalletsFromFile'
+import { savePrivateKeysToFile } from './savePrivateKeysToFile'
 
 export function Wallets (): JSX.Element {
   const [openModal, setOpenModal] = useState(false)
@@ -70,6 +71,16 @@ export function Wallets (): JSX.Element {
         }
       }
       text='Import private keys'
+      classNames='mr-3 mb-3' />
+      <Button
+      onClick={
+        () => {
+          void (async () => {
+            await savePrivateKeysToFile(wallets)
+          })()
+        }
+      }
+      text='Export wallets'
       classNames='mr-3 mb-3' />
       <Button onClick={() => { setOpenModal(true) }} text='Generate wallets' classNames='mr-3 mb-3' />
     </div>

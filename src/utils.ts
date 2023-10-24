@@ -8,8 +8,8 @@ export const encryptWithAES = (text: string): string => {
 }
 
 export const decryptWithAES = (ciphertext: string): string => {
-  const bytes = CryptoJS.AES.decrypt(ciphertext, import.meta.env.VITE_PASSPHRASE)
-  const originalText = bytes.toString(CryptoJS.enc.Utf8)
+  const bytes = CryptoJs.AES.decrypt(ciphertext, import.meta.env.VITE_PASSPHRASE)
+  const originalText = bytes.toString(CryptoJs.enc.Utf8)
   return originalText
 }
 

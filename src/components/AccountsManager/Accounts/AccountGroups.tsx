@@ -1,22 +1,23 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import { PencilSquareIcon, PlusSmallIcon } from '@heroicons/react/24/solid'
 import { Button, Modal } from '../../../shared-components'
 import { CreateAccountGroupModal } from './index'
-import { useGetAccountGroups } from '../../../services/queries'
 import { classNames } from '../../../utils'
+import type { Group } from '../../../interfaces'
 
-export function AccountGroups (): JSX.Element {
+interface Props {
+  currentGroup?: Group
+  groups: Group[]
+}
+
+export function AccountGroups ({ currentGroup, groups }: Props): JSX.Element {
   const [addAccountGroupModal, setAddAccountGroupModal] = useState(false)
-  const { data: groups, isLoading, error } = useGetAccountGroups()
-
-  // TODO: handle loading and exceptions properly
-  if (isLoading) { return <h1 color='white'>Loading</h1> }
-  if (error instanceof Error) { return <h1 color='white'>{error.message}</h1> }
 
   // TODO: Remove hardcoded links
   const accountsUrl = (groupId: string): string => `/accounts-manager/accounts/${groupId}`
   const groupsItems = groups?.map((group) =>
-    <NavLink key={group.id} to={accountsUrl(group.name)} className={
+    <NavLink key={group.id} to={accountsUrl(group.id)} className={
         (navData) => classNames(navData.isActive ? 'text-indigo-400' : 'text-gray-400')}>
       {group.name}
     </NavLink>
@@ -31,7 +32,10 @@ export function AccountGroups (): JSX.Element {
     </NavLink>
     { groupsItems }
     </div>
-    <Button onClick={() => { setAddAccountGroupModal(true) }} text='Add Group' classNames='ml-auto'/>
+    { currentGroup !== undefined
+      ? <Button onClick={() => { }} text={ <PencilSquareIcon className='inline h-4 w-4' aria-hidden='true' /> } type='secondary' classNames='cursor-not-allowed ml-auto'/>
+      : null }
+    <Button onClick={() => { setAddAccountGroupModal(true) }} text={ <><PlusSmallIcon className='inline h-4 w-4' aria-hidden='true' /> Group</>} classNames={currentGroup === undefined ? 'ml-auto' : ''}/>
   </div>
   <Modal openModal={addAccountGroupModal} setOpenModal={setAddAccountGroupModal} Content={ CreateAccountGroupModal } />
 </header>

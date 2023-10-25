@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { UserIcon, BriefcaseIcon, Cog8ToothIcon, BuildingLibraryIcon } from '@heroicons/react/24/outline'
 import {
-  Layout, Sender, SignIn, SignUp, ConfirmSignUp, Accounts, Wallets, Exchanges,
+  Layout, Sender, SignIn, SignUp, ConfirmSignUp, AccountsAll, AccountsByGroup, Wallets, Exchanges,
   OkxAccounts, OkxSubAccounts, BinanceAccounts, GeneralSettings
 } from './components'
 import { PrivateRoute, IndexPage } from './shared-components'
@@ -55,8 +55,8 @@ export const router = createBrowserRouter([
         path: '/accounts-manager/*',
         children: [
           { index: true, element: <IndexPage to='/accounts-manager/accounts/all' /> },
-          // { path: 'accounts', element: <Accounts /> },
-          { path: 'accounts/:groupId', element: <Accounts /> },
+          { path: 'accounts/all', element: <AccountsAll /> },
+          { path: 'accounts/:groupId', element: <AccountsByGroup /> },
           { path: 'wallets', element: <Wallets /> }
         ]
       },

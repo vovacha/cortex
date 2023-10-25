@@ -1,20 +1,21 @@
 import { useState } from 'react'
-import { Modal, Button, Header } from '../../../shared-components'
+import { Modal, Button, Header, TableHead } from '../../../shared-components'
 import GenerateWalletsModal from './GenerateWalletsModal'
 import { accountManagerMenu as menu } from '../../../routes'
-import { useGetWallets, useCreateWalletMut, useDeleteWalletMut } from '../../../services/queries'
+import { useGetWallets, useCreateWalletMut } from '../../../services/queries'
 import { readWalletsFromFile } from './readWalletsFromFile'
 import { savePrivateKeysToFile } from './savePrivateKeysToFile'
 
 export function Wallets (): JSX.Element {
   const [openModal, setOpenModal] = useState(false)
-  const { data: wallets, error } = useGetWallets()
+  const wallets = useGetWallets().data ?? []
   const createWallet = useCreateWalletMut()
-  const deleteWallet = useDeleteWalletMut()
 
-  // TODO: handle loading and exceptions properly
-  if (wallets === undefined) { return <h1 color='white'>Loading</h1> }
-  if (error instanceof Error) { return <h1 color='white'>{error.message}</h1> }
+  async function importPrivateKeys (): Promise<void> {
+    for (const wallet of await readWalletsFromFile()) {
+      await createWallet.mutateAsync(wallet)
+    }
+  }
 
   return (<>
     <Header menu={menu}/>
@@ -28,16 +29,7 @@ export function Wallets (): JSX.Element {
                     {(wallets.length > 0)
                       ? (
                       <table className='min-w-full divide-y divide-gray-700'>
-                        <thead>
-                          <tr>
-                            <th scope='col' className='py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0'>
-                              #
-                            </th>
-                            <th scope='col' className='px-3 py-3.5 text-left text-sm font-semibold text-white'>
-                              Wallet address
-                            </th>
-                          </tr>
-                        </thead>
+                        <TableHead columns={['#', 'Wallet Address']}/>
                         <tbody className='divide-y divide-gray-800'>
                           {wallets.map((wallet, i) => (
                             <tr className='odd:bg-gray-900 even:bg-slate-900 hover:bg-slate-800' key={i}>
@@ -51,6 +43,7 @@ export function Wallets (): JSX.Element {
                       </table>
                         )
                       : null}
+                      {/* TODO: use empty table template https://github.com/ConciergeApplication/concierge/issues/22 */}
                   </div>
                 </div>
               </div>
@@ -60,28 +53,8 @@ export function Wallets (): JSX.Element {
     </main>
     <Modal openModal={openModal} setOpenModal={setOpenModal} Content={ GenerateWalletsModal } />
     <div className="fixed bottom-0 p-6">
-      <Button
-      onClick={
-        () => {
-          void (async () => {
-            for (const wallet of await readWalletsFromFile()) {
-              await createWallet.mutateAsync(wallet)
-            }
-          })()
-        }
-      }
-      text='Import private keys'
-      classNames='mr-3 mb-3' />
-      <Button
-      onClick={
-        () => {
-          void (async () => {
-            await savePrivateKeysToFile(wallets)
-          })()
-        }
-      }
-      text='Export wallets'
-      classNames='mr-3 mb-3' />
+      <Button onClick={() => { void importPrivateKeys() }} text='Import private keys' classNames='mr-3 mb-3' />
+      <Button onClick= {() => { void savePrivateKeysToFile(wallets) }} text='Export wallets' classNames='mr-3 mb-3' />
       <Button onClick={() => { setOpenModal(true) }} text='Generate wallets' classNames='mr-3 mb-3' />
     </div>
     </>

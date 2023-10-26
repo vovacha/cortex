@@ -1,8 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { UserIcon, BriefcaseIcon, Cog8ToothIcon, BuildingLibraryIcon } from '@heroicons/react/24/outline'
 import {
-  Layout, Sender, SignIn, SignUp, ConfirmSignUp, AccountsAll, AccountsByGroup, Wallets, Exchanges,
-  OkxAccounts, OkxSubAccounts, BinanceAccounts, GeneralSettings
+  Layout, Sender, SignIn, SignUp, ConfirmSignUp, Wallets, Exchanges,
+  OkxAccounts, OkxSubAccounts, BinanceAccounts, GeneralSettings, Accounts
 } from './components'
 import { PrivateRoute, IndexPage } from './shared-components'
 import type { HeaderMenuItem } from './interfaces'
@@ -25,7 +25,7 @@ export const menu: HeaderMenuItem[] = [
 
 // Sub-menus
 export const accountManagerMenu: HeaderMenuItem[] = [
-  { name: 'Accounts', href: '/accounts-manager/accounts/all' },
+  { name: 'Accounts', href: '/accounts-manager/accounts' },
   { name: 'EVM Wallets', href: '/accounts-manager/wallets' }
 ]
 export const okxMenu: HeaderMenuItem[] = [
@@ -55,8 +55,7 @@ export const router = createBrowserRouter([
         path: '/accounts-manager/*',
         children: [
           { index: true, element: <IndexPage to='/accounts-manager/accounts/all' /> },
-          { path: 'accounts/all', element: <AccountsAll /> },
-          { path: 'accounts/:groupId', element: <AccountsByGroup /> },
+          { path: 'accounts/:groupId?', element: <Accounts /> },
           { path: 'wallets', element: <Wallets /> }
         ]
       },

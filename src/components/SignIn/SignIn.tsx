@@ -18,8 +18,9 @@ export function SignIn (): JSX.Element {
     signIn.mutate({ username, password }, {
       onSuccess: () => {
         auth.signIn(username)
-        navigate({ pathname: '/accounts-manager/accounts/all' })
-    }})
+        navigate({ pathname: '/accounts-manager/accounts' })
+      }
+    })
   }
   return (
     <>

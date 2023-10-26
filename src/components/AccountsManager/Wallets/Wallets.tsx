@@ -2,14 +2,16 @@ import { useState } from 'react'
 import { Modal, Button, Header, TableHead } from '../../../shared-components'
 import GenerateWalletsModal from './GenerateWalletsModal'
 import { accountManagerMenu as menu } from '../../../routes'
-import { useGetWallets, useCreateWalletMut } from '../../../services/queries'
+import { useGetWallets, useCreateWalletMut, useUpdateWalletMut } from '../../../services/queries'
 import { readWalletsFromFile } from './readWalletsFromFile'
 import { savePrivateKeysToFile } from './savePrivateKeysToFile'
+import { InputEdit } from '../../../shared-components/InputEdit'
 
 export function Wallets (): JSX.Element {
   const [openModal, setOpenModal] = useState(false)
   const wallets = useGetWallets().data ?? []
   const createWallet = useCreateWalletMut()
+  const updateWallet = useUpdateWalletMut()
 
   async function importPrivateKeys (): Promise<void> {
     for (const wallet of await readWalletsFromFile()) {
@@ -29,11 +31,17 @@ export function Wallets (): JSX.Element {
                     {(wallets.length > 0)
                       ? (
                       <table className='min-w-full divide-y divide-gray-700'>
-                        <TableHead columns={['#', 'Wallet Address']}/>
+                        <TableHead columns={['#', 'Name', 'Wallet Address']}/>
                         <tbody className='divide-y divide-gray-800'>
                           {wallets.map((wallet, i) => (
                             <tr className='odd:bg-gray-900 even:bg-slate-900 hover:bg-slate-800' key={i}>
                               <td className='whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-white sm:pl-0'>{i + 1}</td>
+                              <td className='group relative whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
+                                <InputEdit id={`account-name-${i}`} value={wallet.name}
+                                  callBack={(name) => {
+                                    if (wallet.name !== name) { void updateWallet.mutateAsync({ ...wallet, name }) }
+                                  }} />
+                              </td>
                               <td className='group relative whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
                                 {wallet.address}
                               </td>

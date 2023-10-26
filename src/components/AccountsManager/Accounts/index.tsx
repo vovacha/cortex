@@ -1,5 +1,5 @@
 export * from './CreateAccountsModal'
 export * from './CreateAccountGroupModal'
-export * from './EditAccountModal'
+export * from './LinkWalletModal'
 export * from './Accounts'
 export * from './AccountGroups'

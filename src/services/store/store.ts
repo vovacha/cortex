@@ -1,7 +1,8 @@
 import { Store } from 'tauri-plugin-store-api'
 import { v4 as uuidv4 } from 'uuid'
-import type { Account, Group, Wallet, ApiKey, HasId } from '../../interfaces'
+import type { Account, Group, Wallet, ApiKey, HasId, HasName } from '../../interfaces'
 
+const STORE_FILE_NAME = 'concierge_db.dat'
 // TODO: implement singleton factory method
 export abstract class BaseStore<T extends HasId> {
   public readonly listKey
@@ -9,7 +10,7 @@ export abstract class BaseStore<T extends HasId> {
 
   constructor (listKey: string) {
     this.listKey = listKey
-    this.store = new Store('concierge_db.dat')
+    this.store = new Store(STORE_FILE_NAME)
   }
 
   public async get (id: string): Promise<T> {
@@ -30,9 +31,10 @@ export abstract class BaseStore<T extends HasId> {
     return await Promise.all<any>(toBeFetched).then(values => values.filter(v => v))
   }
 
-  public async create (data: Partial<T>): Promise<T> {
+  public async create (data: Partial<T> & HasName): Promise<T> {
     const id = uuidv4()
     data.id = id
+    data.name = await this.modifyNameWithCount(data.name)
     const obj = ({ ...data } as unknown) as T
     await Promise.all([this.store.set(id, obj), this.addToList(id)])
     return obj
@@ -58,6 +60,20 @@ export abstract class BaseStore<T extends HasId> {
     }
     toBeDeleted.push(this.store.delete(this.listKey))
     await Promise.all(toBeDeleted)
+  }
+
+  /**
+  * Tracks usage of names in the object namespace.
+  * Ex. namespace "accounts". An account named "test" turns into "test-1".
+  * The following account called "test" turns into "test-2".
+  * Returns a new name with the postfix of times the name was used.
+  * @param {string} name
+  */
+  protected async modifyNameWithCount (name: string): Promise<string> {
+    const key = `${this.listKey}-${name}`
+    const count: number = await this.store.get(key) ?? 0
+    await this.store.set(key, count + 1)
+    return `${name}-${count + 1}`
   }
 
   private async addToList (id: string): Promise<void> {

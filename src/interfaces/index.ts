@@ -25,6 +25,10 @@ export interface HasId {
   id: string
 }
 
+export interface HasName {
+  name: string
+}
+
 export interface Group {
   id: string
   name: string

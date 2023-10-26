@@ -1,41 +1,35 @@
 import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { PencilSquareIcon } from '@heroicons/react/24/solid'
+import { useParams } from 'react-router-dom'
 import { LinkIcon } from '@heroicons/react/24/outline'
 
 import { useAuth } from '../../../hooks/useAuth'
 import { accountManagerMenu as menu } from '../../../routes'
 import { Button, Header, Modal, TableHead } from '../../../shared-components'
+import { CreateAccountsModal, LinkWalletModal, AccountGroups } from './index'
 import type { Account, Group } from '../../../interfaces'
-import { useGetAccountGroup, useGetAccountGroups, useGetAccounts, useGetWallets, useDeleteAccountsMut, useSignOutMut } from '../../../services/queries'
-import { CreateAccountsModal, EditAccountModal, AccountGroups } from './index'
+import {
+  useDeleteAccountsMut, useGetAccountGroup, useGetAccountGroups,
+  useGetAccounts, useGetWallets, useSignOutMut, useUpdateAccountMut
+} from '../../../services/queries'
+import { InputEdit } from '../../../shared-components/InputEdit'
+import { Checkbox } from '../../../shared-components/Checkbox'
 
-export function AccountsAll (): JSX.Element {
-  const { data: accounts } = useGetAccounts()
-  // TODO: use loading template https://github.com/ConciergeApplication/concierge/issues/23
-  if (accounts === undefined) { return <h1 color='white'>Loading</h1> }
-  return <AccountsBase accounts={accounts}/>
-}
-
-export function AccountsByGroup (): JSX.Element {
-  const { data: accounts } = useGetAccounts()
-  const groupId = useParams().groupId ?? 'should not happen'
-  const { data: accountGroup } = useGetAccountGroup(groupId)
-  // TODO: use loading template https://github.com/ConciergeApplication/concierge/issues/23
-  if (accounts === undefined || accountGroup === undefined) {
-    return <h1 color='white'>Loading</h1>
+export function Accounts (): JSX.Element {
+  const groupId = useParams().groupId
+  if (groupId === undefined) {
+    return <AccountsBase/>
+  } else {
+    return <AccountsByGroup groupId={groupId}/>
   }
-  return <AccountsBase accounts={accounts} group={accountGroup} />
 }
 
-interface Props {
-  accounts: Account[]
-  group?: Group
+function AccountsByGroup ({ groupId }: { groupId: string }): JSX.Element {
+  return <AccountsBase group={useGetAccountGroup(groupId).data} />
 }
 
-function AccountsBase ({ accounts, group }: Props): JSX.Element {
+function AccountsBase ({ group }: { group?: Group }): JSX.Element {
   const [addAccountModal, setAddAccountModal] = useState(false)
-  const [editAccountModal, setEditAccountModal] = useState<Account | undefined>()
+  const [linkWalletModal, setLinkWalletModal] = useState<Account | undefined>()
   const deleteAllAccounts = useDeleteAccountsMut()
 
   const signOut = useSignOutMut()
@@ -44,7 +38,9 @@ function AccountsBase ({ accounts, group }: Props): JSX.Element {
     signOut.mutate()
     auth.signOut()
   }
-  
+
+  const updateAccount = useUpdateAccountMut()
+  const accounts = useGetAccounts().data ?? []
   const groups = useGetAccountGroups().data ?? []
   const wallets = useGetWallets().data ?? []
 
@@ -52,10 +48,16 @@ function AccountsBase ({ accounts, group }: Props): JSX.Element {
     // If the Group is selected, show Accounts belonging to the Group. Otherwise show all Accounts
     (a) => group === undefined || a.group === group.id ? a : null
   ).map((account, i) => (
-    <tr className='odd:bg-gray-900 even:bg-slate-900 hover:bg-slate-800' key={i}>
-      <td className='whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-white sm:pl-0'>{i + 1}</td>
+    <tr className='group odd:bg-gray-900 even:bg-slate-900 hover:bg-slate-800' key={i}>
+      <td className='whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-white sm:pl-0'>
+        <Checkbox id={`account-${i}`}/>
+      </td>
+      <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>{i + 1}</td>
       <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
-        {account.name}
+        <InputEdit id={`account-name-${i}`} value={account.name}
+          callBack={(name) => {
+            if (account.name !== name) { void updateAccount.mutateAsync({ ...account, name }) }
+          }} />
       </td>
       {group === undefined
         ? <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
@@ -64,15 +66,12 @@ function AccountsBase ({ accounts, group }: Props): JSX.Element {
         : null
       }
       <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
+        <span onClick={() => { setLinkWalletModal(account) }} className='cursor-pointer inline-block'>
         {wallets.find((w) => w.id === account.evmWallet)?.address ??
-          <LinkIcon className='h-4 w-4 cursor-not-allowed' aria-hidden='true' />}
+          <LinkIcon className='h-4 w-4' aria-hidden='true' />}</span>
       </td>
       <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
         <LinkIcon className='h-4 w-4 cursor-not-allowed' aria-hidden='true' />
-      </td>
-      <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
-        <PencilSquareIcon onClick={() => { setEditAccountModal(account) }}
-          className='text-white hover:cursor-pointer h-4 w-4 shrink-0' aria-hidden='true' />
       </td>
     </tr>
   ))
@@ -92,8 +91,8 @@ function AccountsBase ({ accounts, group }: Props): JSX.Element {
                       ? (
                       <table className='min-w-full divide-y divide-gray-700'>
                         {group === undefined
-                          ? <TableHead columns={['#', 'Name', 'Group', 'EVM Wallet', 'Starknet Wallet', '']}/>
-                          : <TableHead columns={['#', 'Name', 'EVM Wallet', 'Starknet Wallet', '']}/>
+                          ? <TableHead columns={['', '#', 'Name', 'Group', 'EVM Wallet', 'Starknet Wallet']}/>
+                          : <TableHead columns={['', '#', 'Name', 'EVM Wallet', 'Starknet Wallet']}/>
                         }
                         <tbody className='divide-y divide-gray-800'>{tableRows}</tbody>
                       </table>
@@ -107,8 +106,8 @@ function AccountsBase ({ accounts, group }: Props): JSX.Element {
         </div>
       </div>
     </main>
-    <Modal openModal={addAccountModal} setOpenModal={setAddAccountModal} Content={ CreateAccountsModal } />
-    <Modal openModal={editAccountModal} setOpenModal={setEditAccountModal} Content={ EditAccountModal } />
+    <Modal openModal={ addAccountModal } setOpenModal={ setAddAccountModal } Content={ CreateAccountsModal } />
+    <Modal openModal={ linkWalletModal } setOpenModal={ setLinkWalletModal } Content={ LinkWalletModal } />
     <div className='fixed bottom-0 p-6'>
         <Button onClick={() => { setAddAccountModal(true) }} text='Add Accounts' classNames='mr-3 mb-3' />
         {(isDevelopment)

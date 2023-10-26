@@ -18,7 +18,7 @@ export async function readWalletsFromFile (): Promise<Array<Partial<Wallet>>> {
     if (address === undefined) {
       errorKeys.push(pkey)
     } else {
-      wallets.push({ privateKey: encryptWithAES(pkey), address })
+      wallets.push({ name: 'Imported', privateKey: encryptWithAES(pkey), address })
     }
   })
   if (errorKeys.length > 0) {

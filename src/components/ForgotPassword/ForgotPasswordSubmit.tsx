@@ -1,40 +1,38 @@
-import { useState } from 'react'
-import { useNavigate, useParams, NavLink } from 'react-router-dom'
 import classNames from 'classnames'
+import { useState } from 'react'
+import { NavLink, useNavigate, useParams } from 'react-router-dom'
 
 import logo from '../../images/logo.png'
-import { useAuth } from '../../hooks/useAuth'
-import { useSignInMut } from '../../services/queries'
+import { useForgotPasswordSubmitMut } from '../../services/queries'
 
-export function SignIn (): JSX.Element {
-  const auth = useAuth()
-  const signIn = useSignInMut()
+export function ForgotPasswordSubmit (): JSX.Element {
   const navigate = useNavigate()
   const params = useParams()
   const [username, setUsername] = useState(params.username ?? '')
   const [password, setPassword] = useState('')
+  const [code, setCode] = useState('')
+  const forgotPasswordConfirm = useForgotPasswordSubmitMut()
 
-  const executeSignIn = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const executeForgotPassword = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
-    signIn.mutate({ username, password }, {
+    forgotPasswordConfirm.mutate({ username, password, code }, {
       onSuccess: () => {
-        auth.signIn(username)
-        navigate({ pathname: '/accounts-manager/accounts' })
-      }
-    })
+        navigate({ pathname: `/signin/${username}` })
+    }})
   }
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      <img className="mx-auto h-24 w-auto" src={logo} alt="Concierge"/>
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <img className="mx-auto h-10 w-auto" src={logo} alt="Concierge"></img>
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
-            Sign in to your account
+            Reset password
           </h2>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={ (e) => { void executeSignIn(e) }}>
+          <form className="space-y-6" onSubmit={ (e) => { void executeForgotPassword(e) }}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">
                 Email address
@@ -45,7 +43,6 @@ export function SignIn (): JSX.Element {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  tabIndex={1}
                   required
                   value={username}
                   onChange={(e) => { setUsername(e.target.value) }}
@@ -56,14 +53,28 @@ export function SignIn (): JSX.Element {
 
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-white">
-                  Password
+                <label htmlFor="code" className="block text-sm font-medium leading-6 text-white">
+                  Verification code
                 </label>
-                <div className="text-sm">
-                  <NavLink to={ `/forgot-password/${username}` } className="font-semibold text-indigo-400 hover:text-indigo-300" tabIndex={4}>
-                    Forgot password?
-                  </NavLink>
-                </div>
+              </div>
+              <div className="mt-2">
+                <input
+                  id="code"
+                  name="code"
+                  type="text"
+                  required
+                  value={code}
+                  onChange={(e) => { setCode(e.target.value) }}
+                  className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm font-medium leading-6 text-white">
+                  New password
+                </label>
               </div>
               <div className="mt-2">
                 <input
@@ -71,7 +82,6 @@ export function SignIn (): JSX.Element {
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  tabIndex={2}
                   required
                   value={password}
                   onChange={(e) => { setPassword(e.target.value) }}
@@ -80,10 +90,10 @@ export function SignIn (): JSX.Element {
               </div>
             </div>
 
-            {(signIn.error !== null)
+            {(forgotPasswordConfirm.error !== null)
               ? (
                 <p className="mt-2 text-sm text-red-600">
-                  {signIn.error?.message}
+                  {forgotPasswordConfirm.error?.message}
                 </p>
                 )
               : null
@@ -91,23 +101,21 @@ export function SignIn (): JSX.Element {
 
             <div>
               <button
-                disabled={signIn.isLoading}
-                tabIndex={3}
+                disabled={forgotPasswordConfirm.isLoading}
                 type="submit"
                 className={classNames({
                   'flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500': true,
-                  'disabled:opacity-75': signIn.isLoading
+                  'disabled:opacity-75': forgotPasswordConfirm.isLoading
                 })}
               >
-                Sign in
+                Submit
               </button>
             </div>
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-400">
-            Not a member?{' '}
-            <NavLink to="/signup" className="font-semibold leading-6 text-indigo-400 hover:text-indigo-300" tabIndex={5}>
-              Register
+            <NavLink to="/signin" className="font-semibold leading-6 text-indigo-400 hover:text-indigo-300">
+              Sign in
             </NavLink>
           </p>
         </div>

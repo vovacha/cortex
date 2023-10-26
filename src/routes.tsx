@@ -1,8 +1,12 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { UserIcon, BriefcaseIcon, Cog8ToothIcon, BuildingLibraryIcon } from '@heroicons/react/24/outline'
 import {
-  Layout, Sender, SignIn, SignUp, ConfirmSignUp, Wallets, Exchanges,
-  OkxAccounts, OkxSubAccounts, BinanceAccounts, GeneralSettings, Accounts
+  Layout, 
+  Sender, GeneralSettings,
+  SignIn, SignUp, ConfirmSignUp, ForgotPassword, ForgotPasswordSubmit,
+  Accounts, Wallets, Exchanges,
+  OkxAccounts, OkxSubAccounts,
+  BinanceAccounts
 } from './components'
 import { PrivateRoute, IndexPage } from './shared-components'
 import type { HeaderMenuItem } from './interfaces'
@@ -44,9 +48,11 @@ export const settingsMenu: HeaderMenuItem[] = [
 ]
 
 export const router = createBrowserRouter([
-  { path: '/signin', element: <SignIn /> },
+  { path: '/signin/:username?', element: <SignIn /> },
   { path: '/signup', element: <SignUp /> },
-  { path: '/confirm-signup/:username/', element: <ConfirmSignUp /> },
+  { path: '/confirm-signup/:username', element: <ConfirmSignUp /> },
+  { path: '/forgot-password/:username?', element: <ForgotPassword /> },
+  { path: '/forgot-password-submit/:username', element: <ForgotPasswordSubmit /> },
   {
     path: '/',
     element: <PrivateRoute><Layout /></PrivateRoute>,

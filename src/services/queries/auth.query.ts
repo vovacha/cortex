@@ -10,22 +10,19 @@ const AwsConfigAuth = {
 }
 Amplify.configure({ Auth: AwsConfigAuth })
 
-interface SingUpData {
+interface HasUsername {
   username: string
+}
+
+interface HasPassword {
   password: string
 }
 
-interface SignUpVerificationData {
-  username: string
+interface HasCode {
   code: string
 }
 
-interface SignInData {
-  username: string
-  password: string
-}
-
-export function useSignUpMut (): UseMutationResult<ISignUpResult, Error, SingUpData, unknown> {
+export function useSignUpMut (): UseMutationResult<ISignUpResult, Error, HasUsername & HasPassword, unknown> {
   return useMutation({
     mutationFn: async ({ username, password }) => {
       const signUpParameters = {
@@ -40,7 +37,7 @@ export function useSignUpMut (): UseMutationResult<ISignUpResult, Error, SingUpD
   })
 }
 
-export function useConfirmSignUpMut (): UseMutationResult<any, Error, SignUpVerificationData, unknown> {
+export function useConfirmSignUpMut (): UseMutationResult<any, Error, HasUsername & HasCode, unknown> {
   return useMutation({
     mutationFn: async ({ username, code }) => {
       return await Auth.confirmSignUp(username, code)
@@ -48,7 +45,7 @@ export function useConfirmSignUpMut (): UseMutationResult<any, Error, SignUpVeri
   })
 }
 
-export function useSignInMut (): UseMutationResult<CognitoUser, Error, SignInData, unknown> {
+export function useSignInMut (): UseMutationResult<CognitoUser, Error, HasUsername & HasPassword, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ username, password }) => {
@@ -56,6 +53,22 @@ export function useSignInMut (): UseMutationResult<CognitoUser, Error, SignInDat
     },
     onSuccess: user => {
       queryClient.setQueryData(['authUser'], user)
+    }
+  })
+}
+
+export function useForgotPasswordRequestMut (): UseMutationResult<any, Error, HasUsername, unknown> {
+  return useMutation({
+    mutationFn: async ({ username }) => {
+      return await Auth.forgotPassword(username)
+    }
+  })
+}
+
+export function useForgotPasswordSubmitMut (): UseMutationResult<string, Error, HasUsername & HasPassword & HasCode, unknown> {
+  return useMutation({
+    mutationFn: async ({ username, password, code }) => {
+      return await Auth.forgotPasswordSubmit(username, code, password)
     }
   })
 }

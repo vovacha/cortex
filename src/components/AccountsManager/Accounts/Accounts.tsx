@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { PencilSquareIcon } from '@heroicons/react/24/solid'
 import { LinkIcon } from '@heroicons/react/24/outline'
 
 import { useAuth } from '../../../hooks/useAuth'
 import { accountManagerMenu as menu } from '../../../routes'
 import { Button, Header, Modal, TableHead } from '../../../shared-components'
-import { CreateAccountsModal, EditAccountModal, AccountGroups } from './index'
 import type { Account, Group } from '../../../interfaces'
-import { useDeleteAccountsMut, useGetAccountGroup, useGetAccountGroups, useGetAccounts, useGetWallets } from '../../../services/queries'
+import { useGetAccountGroup, useGetAccountGroups, useGetAccounts, useGetWallets, useDeleteAccountsMut, useSignOutMut } from '../../../services/queries'
+import { CreateAccountsModal, EditAccountModal, AccountGroups } from './index'
 
 export function AccountsAll (): JSX.Element {
   const { data: accounts } = useGetAccounts()
@@ -37,9 +37,16 @@ function AccountsBase ({ accounts, group }: Props): JSX.Element {
   const [addAccountModal, setAddAccountModal] = useState(false)
   const [editAccountModal, setEditAccountModal] = useState<Account | undefined>()
   const deleteAllAccounts = useDeleteAccountsMut()
+
+  const signOut = useSignOutMut()
+  const auth = useAuth()
+  const executeSignOut = async (): Promise<void> => {
+    signOut.mutate()
+    auth.signOut()
+  }
+  
   const groups = useGetAccountGroups().data ?? []
   const wallets = useGetWallets().data ?? []
-  const auth = useAuth()
 
   const tableRows = accounts.filter(
     // If the Group is selected, show Accounts belonging to the Group. Otherwise show all Accounts
@@ -107,7 +114,7 @@ function AccountsBase ({ accounts, group }: Props): JSX.Element {
         {(isDevelopment)
           ? <><Button onClick={() => { deleteAllAccounts.mutate() }} text='Clear Accounts'
                 classNames='mr-3 mb-3' type='secondary' />
-            <Button onClick={ auth.signOut } text='Sign Out' type='secondary' classNames='mr-3 mb-3'/></>
+            <Button onClick={ () => { void executeSignOut() } } text='Sign Out' type='secondary' classNames='mr-3 mb-3'/></>
           : null
         }
     </div>

@@ -1,23 +1,25 @@
 import { useState } from 'react'
 import { useNavigate, NavLink } from 'react-router-dom'
-import { message } from '@tauri-apps/api/dialog'
+import classNames from 'classnames'
+
 import logo from '../../images/logo.png'
 import { useAuth } from '../../hooks/useAuth'
+import { useSignInMut } from '../../services/queries'
 
 export function SignIn (): JSX.Element {
   const auth = useAuth()
+  const signIn = useSignInMut()
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const executeSignIn = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
-    const result = await auth.signIn(username, password)
-    if (result.success === true) {
-      navigate({ pathname: '/accounts-manager/accounts/all' })
-    } else {
-      await message(result.message)
-    }
+    signIn.mutate({ username, password }, {
+      onSuccess: () => {
+        auth.signIn(username)
+        navigate({ pathname: '/accounts-manager/accounts/all' })
+    }})
   }
   return (
     <>
@@ -74,10 +76,23 @@ export function SignIn (): JSX.Element {
               </div>
             </div>
 
+            {(signIn.error !== null)
+              ? (
+                <p className="mt-2 text-sm text-red-600">
+                  {signIn.error?.message}
+                </p>
+                )
+              : null
+            }
+
             <div>
               <button
+                disabled={signIn.isLoading}
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                className={classNames({
+                  'flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500': true,
+                  'disabled:opacity-75': signIn.isLoading
+                })}
               >
                 Sign in
               </button>

@@ -30,6 +30,11 @@ export interface Group {
   name: string
 }
 
+export interface Result {
+  success: boolean
+  message: string
+}
+
 export * from './accounts'
 export * from './exchanges'
 export * from './wallets'

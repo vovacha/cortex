@@ -10,5 +10,8 @@ export const PrivateRoute: React.FC<Props> = ({ children }: Props) => {
   if (isLoading === true) {
     return <></>
   }
-  return isAuthenticated === true ? children : <Navigate to='/signin' replace />
+  if (isAuthenticated === true) {
+    return children
+  }
+  return <Navigate to='/signin' replace />
 }

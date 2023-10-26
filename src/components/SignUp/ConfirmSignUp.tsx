@@ -1,23 +1,30 @@
 import { useState } from 'react'
-import { useNavigate, NavLink } from 'react-router-dom'
+import { useNavigate, useParams, NavLink } from 'react-router-dom'
 import { message } from '@tauri-apps/api/dialog'
+import classNames from 'classnames'
+
 import logo from '../../images/logo.png'
-import { useAuth } from '../../hooks/useAuth'
+import { useConfirmSignUpMut } from '../../services/queries'
 
 export function ConfirmSignUp (): JSX.Element {
-  const auth = useAuth()
+  const { username } = useParams()
   const navigate = useNavigate()
+  const confirmSignUp = useConfirmSignUpMut()
   const [code, setCode] = useState('')
 
   const executeConfirmSignUp = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
-    const result = await auth.confirmSignUp(code)
-    if (result.success === true) {
-      await message('E-mail was successfully confirmed')
-      navigate({ pathname: '/signin' })
-    } else {
-      await message(result.message)
+    if (username === undefined) {
+      navigate(-1)
+      return
     }
+
+    confirmSignUp.mutate({ username, code }, {
+      onSuccess: async () => {
+        await message('E-mail was successfully confirmed')
+        navigate({ pathname: '/signin' })
+      }
+    })
   }
   return (
     <>
@@ -41,7 +48,7 @@ export function ConfirmSignUp (): JSX.Element {
                 <input
                   id="code"
                   name="code"
-                  type="code"
+                  type="text"
                   autoComplete="current-code"
                   required
                   value={code}
@@ -51,10 +58,23 @@ export function ConfirmSignUp (): JSX.Element {
               </div>
             </div>
 
+            {(confirmSignUp.error !== null)
+              ? (
+                <p className="mt-2 text-sm text-red-600">
+                  {confirmSignUp.error?.message}
+                </p>
+                )
+              : null
+            }
+
             <div>
               <button
+                disabled={confirmSignUp.isLoading}
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                className={classNames({
+                  'flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500': true,
+                  'disabled:opacity-75': confirmSignUp.isLoading
+                })}
               >
                 Confirm
               </button>

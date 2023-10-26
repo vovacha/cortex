@@ -1,23 +1,22 @@
 import { useState } from 'react'
 import { useNavigate, NavLink } from 'react-router-dom'
-import { message } from '@tauri-apps/api/dialog'
+import classNames from 'classnames'
+
 import logo from '../../images/logo.png'
-import { useAuth } from '../../hooks/useAuth'
+import { useSignUpMut } from '../../services/queries'
 
 export function SignUp (): JSX.Element {
-  const auth = useAuth()
   const navigate = useNavigate()
+  const signUp = useSignUpMut()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const executeSignUp = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
-    const result = await auth.signUp(username, password)
-    if (result.success === true) {
-      navigate({ pathname: '/confirm-signup' })
-    } else {
-      await message(result.message)
-    }
+    signUp.mutate({ username, password }, {
+      onSuccess: () => {
+        navigate({ pathname: `/confirm-signup/${username}/` })
+    }})
   }
   return (
     <>
@@ -69,10 +68,23 @@ export function SignUp (): JSX.Element {
               </div>
             </div>
 
+            {(signUp.error !== null)
+              ? (
+                <p className="mt-2 text-sm text-red-600">
+                  {signUp.error?.message}
+                </p>
+                )
+              : null
+            }
+
             <div>
               <button
+                disabled={signUp.isLoading}
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                className={classNames({
+                  'flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500': true,
+                  'disabled:opacity-75': signUp.isLoading
+                })}
               >
                 Register
               </button>

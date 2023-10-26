@@ -1,22 +1,12 @@
-import { Amplify, Auth } from 'aws-amplify'
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { AwsConfigAuth } from './auth.conf'
-
-Amplify.configure({ Auth: AwsConfigAuth })
+import { useCurrentActiveUser } from '../services/queries'
 
 interface UseAuth {
   isLoading: boolean
   isAuthenticated: boolean
   username: string
-  signIn: (username: string, password: string) => Promise<Result>
-  signOut: () => Promise<Result>
-  signUp: (username: string, password: string) => Promise<Result>
-  confirmSignUp: (username: string, code: string) => Promise<Result>
-}
-
-interface Result {
-  success: boolean
-  message: string
+  signIn: (username: string) => void
+  signOut: () => void
 }
 
 interface Props {
@@ -38,84 +28,22 @@ const useProvideAuth = (): UseAuth => {
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [username, setUsername] = useState('')
+  const currentActiveUser = useCurrentActiveUser()
 
   useEffect(() => {
-    Auth.currentAuthenticatedUser()
-      .then((result) => {
-        setUsername(result.username)
-        setIsAuthenticated(true)
-        setIsLoading(false)
-      })
-      .catch(() => {
-        setUsername('')
-        setIsAuthenticated(false)
-        setIsLoading(false)
-      })
-  }, [])
+    setIsAuthenticated(!currentActiveUser.isError)
+    setUsername(currentActiveUser.data?.getUsername() ?? '')
+    setIsLoading(false)
+  }, [currentActiveUser])
 
-  const signIn = async (username: string, password: string): Promise<Result> => {
-    try {
-      const result = await Auth.signIn(username, password)
-      setUsername(result.username)
-      setIsAuthenticated(true)
-      return { success: true, message: '' }
-    } catch (error) {
-      return {
-        success: false,
-        message: 'LOGIN FAIL'
-      }
-    }
+  const signIn = (username: string): void => {
+    setUsername(username)
+    setIsAuthenticated(true)
   }
 
-  const signUp = async (username: string, password: string): Promise<Result> => {
-    try {
-      await Auth.signUp({ username, password, attributes: { email: username } })
-        .then((result) => {
-          setUsername(username)
-          console.log(result)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-      return { success: true, message: '' }
-    } catch (error) {
-      return {
-        success: false,
-        message: 'SIGNUP FAIL'
-      }
-    }
-  }
-
-  const confirmSignUp = async (code: string): Promise<Result> => {
-    try {
-      await Auth.confirmSignUp(username, code)
-        .then((result) => {
-          console.log(result)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-      return { success: true, message: '' }
-    } catch (error) {
-      return {
-        success: false,
-        message: 'CONFIRM SIGNUP FAIL'
-      }
-    }
-  }
-
-  const signOut = async (): Promise<Result> => {
-    try {
-      await Auth.signOut()
-      setUsername('')
-      setIsAuthenticated(false)
-      return { success: true, message: '' }
-    } catch (error) {
-      return {
-        success: false,
-        message: 'LOGOUT FAIL'
-      }
-    }
+  const signOut = (): void => {
+    setUsername('')
+    setIsAuthenticated(false)
   }
 
   return {
@@ -123,8 +51,6 @@ const useProvideAuth = (): UseAuth => {
     isAuthenticated,
     username,
     signIn,
-    signOut,
-    signUp,
-    confirmSignUp
+    signOut
   }
 }

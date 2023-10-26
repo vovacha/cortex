@@ -46,7 +46,7 @@ export const settingsMenu: HeaderMenuItem[] = [
 export const router = createBrowserRouter([
   { path: '/signin', element: <SignIn /> },
   { path: '/signup', element: <SignUp /> },
-  { path: '/confirm-signup', element: <ConfirmSignUp /> },
+  { path: '/confirm-signup/:username/', element: <ConfirmSignUp /> },
   {
     path: '/',
     element: <PrivateRoute><Layout /></PrivateRoute>,

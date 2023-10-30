@@ -1,4 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import {
+  PlusSmallIcon, ArrowUpOnSquareStackIcon, ArrowDownOnSquareStackIcon
+} from '@heroicons/react/24/outline'
 import { Modal, Button, Header, TableHead } from '../../../shared-components'
 import GenerateWalletsModal from './GenerateWalletsModal'
 import { accountManagerMenu as menu } from '../../../routes'
@@ -6,16 +9,24 @@ import { useGetWallets, useCreateWalletMut, useUpdateWalletMut } from '../../../
 import { readWalletsFromFile } from './readWalletsFromFile'
 import { savePrivateKeysToFile } from './savePrivateKeysToFile'
 import { InputEdit } from '../../../shared-components/InputEdit'
+import type { HasName, Wallet } from '../../../interfaces'
 
 export function Wallets (): JSX.Element {
   const [openModal, setOpenModal] = useState(false)
   const wallets = useGetWallets().data ?? []
   const createWallet = useCreateWalletMut()
   const updateWallet = useUpdateWalletMut()
+  const [namesState, setNamesState] = useState<string[]>([])
+
+  useEffect(() => {
+    if (wallets !== undefined) {
+      setNamesState(wallets.map((a) => a.name))
+    }
+  }, [wallets])
 
   async function importPrivateKeys (): Promise<void> {
     for (const wallet of await readWalletsFromFile()) {
-      await createWallet.mutateAsync(wallet)
+      await createWallet.mutateAsync(wallet as Partial<Wallet> & HasName)
     }
   }
 
@@ -34,13 +45,14 @@ export function Wallets (): JSX.Element {
                         <TableHead columns={['#', 'Name', 'Wallet Address']}/>
                         <tbody className='divide-y divide-gray-800'>
                           {wallets.map((wallet, i) => (
-                            <tr className='odd:bg-gray-900 even:bg-slate-900 hover:bg-slate-800' key={i}>
+                            <tr className='group odd:bg-gray-900 even:bg-slate-900 hover:bg-slate-800' key={i}>
                               <td className='whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-white sm:pl-0'>{i + 1}</td>
                               <td className='group relative whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
-                                <InputEdit id={`account-name-${i}`} value={wallet.name}
-                                  callBack={(name) => {
-                                    if (wallet.name !== name) { void updateWallet.mutateAsync({ ...wallet, name }) }
-                                  }} />
+                                <InputEdit index={i} name='wallet-name' value={namesState[i]}
+                                  onChange={(name) => {
+                                    setNamesState(namesState.map((oldName, j) => j === i ? name : oldName))
+                                  }}
+                                  onBlur={ (name = namesState[i]) => { void updateWallet.mutateAsync({ ...wallet, name }) }} />
                               </td>
                               <td className='group relative whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
                                 {wallet.address}
@@ -61,9 +73,12 @@ export function Wallets (): JSX.Element {
     </main>
     <Modal openModal={openModal} setOpenModal={setOpenModal} Content={ GenerateWalletsModal } />
     <div className="fixed bottom-0 p-6">
-      <Button onClick={() => { void importPrivateKeys() }} text='Import private keys' classNames='mr-3 mb-3' />
-      <Button onClick= {() => { void savePrivateKeysToFile(wallets) }} text='Export wallets' classNames='mr-3 mb-3' />
-      <Button onClick={() => { setOpenModal(true) }} text='Generate wallets' classNames='mr-3 mb-3' />
+      <Button onClick={() => { setOpenModal(true) }}
+        text={ <><PlusSmallIcon className='inline h-4 w-4' aria-hidden='true' /> Generate</>} />
+      <Button onClick={() => { void importPrivateKeys() }} type='secondary'
+        text={ <><ArrowDownOnSquareStackIcon className='inline h-4 w-4' aria-hidden='true' /> Import</>} />
+      <Button onClick= {() => { void savePrivateKeysToFile(wallets) }} type='secondary'
+        text={ <><ArrowUpOnSquareStackIcon className='inline h-4 w-4' aria-hidden='true' /> Export</>} />
     </div>
     </>
   )

@@ -1,9 +1,9 @@
 import { Wallet as EthersWallet } from 'ethers'
 import type { Wallet } from '../interfaces'
 
-export function generateWallet (): Partial<Wallet> & { privateKey: string } {
+export function generateWallet (): Partial<Wallet> {
   const hdWallet = EthersWallet.createRandom()
-  const w: Partial<Wallet> & { privateKey: string } = {
+  const w: Partial<Wallet> = {
     privateKey: hdWallet.privateKey,
     address: hdWallet.address
   }

@@ -1,23 +1,18 @@
-import { useState } from 'react'
-
 interface Props {
-  id: string
-  value: string
-  callBack: React.Dispatch<React.SetStateAction<any>>
+  index: number
+  name: string
+  value: any
+  onChange: (value: any) => void
+  onBlur: (value: any) => void
 }
 
-export function InputEdit ({ id, value, callBack }: Props): JSX.Element {
-  const [item, setItem] = useState<string>(value)
+export function InputEdit ({ index, name, value, onChange, onBlur }: Props): JSX.Element {
+  const id = `${name}-${index}`
   return (<>
       <input
-        onChange={(event) => {
-          setItem(event.target.value)
-        }}
-        onBlur={(event) => {
-          setItem(event.target.value)
-          callBack(event.target.value)
-        }}
-        value={item}
+        onChange={(event) => { onChange(event.target.value) }}
+        onBlur={(event) => { onBlur(event.target.value) }}
+        value={value}
         type='text'
         name={id}
         id={id}

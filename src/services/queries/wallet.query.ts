@@ -2,7 +2,7 @@ import {
   useMutation, useQuery, useQueryClient,
   type UseMutationResult, type UseQueryResult
 } from '@tanstack/react-query'
-import type { Wallet, HasId } from '../../interfaces'
+import type { Wallet, HasId, HasName } from '../../interfaces'
 import { walletStoreAPI } from '../api/store.service'
 
 // Queries:
@@ -23,13 +23,13 @@ export function useGetWallet (id: string): UseQueryResult<Wallet, unknown> {
 
 // Mutations:
 
-export function useCreateWalletMut (): UseMutationResult<Wallet, unknown, Partial<Wallet>, unknown> {
+export function useCreateWalletMut (): UseMutationResult<Wallet, unknown, Partial<Wallet> & HasName, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (partialAccount) => { return await walletStoreAPI.create(partialAccount) },
-    onSuccess: newAccount => {
+    onSuccess: async (newAccount) => {
       queryClient.setQueryData(['wallets', newAccount.id], newAccount)
-      queryClient.invalidateQueries(['wallets'], { exact: true })
+      await queryClient.invalidateQueries(['wallets'], { exact: true })
     }
   })
 }
@@ -48,8 +48,8 @@ export function useDeleteWalletMut (): UseMutationResult<void, unknown, string, 
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (id: string) => { await walletStoreAPI.delete(id) },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['wallets'], { exact: true })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['wallets'], { exact: true })
     }
   })
 }
@@ -58,8 +58,8 @@ export function useDeleteWalletsMut (): UseMutationResult<void, unknown, void, u
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async () => { await walletStoreAPI.deleteAll() },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['wallets'], { exact: true })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['wallets'], { exact: true })
     }
   })
 }

@@ -60,7 +60,7 @@ export const router = createBrowserRouter([
       {
         path: '/accounts-manager/*',
         children: [
-          { index: true, element: <IndexPage to='/accounts-manager/accounts/all' /> },
+          { index: true, element: <IndexPage to='/accounts-manager/accounts' /> },
           { path: 'accounts/:groupId?', element: <Accounts /> },
           { path: 'wallets', element: <Wallets /> }
         ]

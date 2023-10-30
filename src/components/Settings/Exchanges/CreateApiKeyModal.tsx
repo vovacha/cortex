@@ -19,7 +19,7 @@ export default function CreateApiKeyModal ({ setOpenModal }: Props): JSX.Element
   function getOptions (): JSX.Element[] {
     const options: JSX.Element[] = []
     enumKeys(Exchanges).forEach((val) => {
-      options.push(<option value={val}>{Exchanges[Number(val)]}</option>)
+      options.push(<option key={val} value={val}>{Exchanges[Number(val)]}</option>)
     })
     return options
   }

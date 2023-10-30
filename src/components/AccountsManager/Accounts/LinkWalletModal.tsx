@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Account } from '../../../interfaces'
 import { Button, Select } from '../../../shared-components'
 import { useUpdateAccountMut, useGetWallets } from '../../../services/queries'
+import { walletCompactView } from '../../../utils'
 
 interface Props {
   openModal: Account
@@ -18,12 +19,12 @@ export function LinkWalletModal ({ openModal: account, setOpenModal }: Props): J
 
   function getWalletsOptions (): JSX.Element[] {
     const options: JSX.Element[] = []
-    options.push(<option value={undefined}>{CHOOSE}</option>)
+    options.push(<option key={CHOOSE} value={undefined}>{CHOOSE}</option>)
     wallets.filter(
       // Show only not attached wallets in addition to a currently attached
       (w) => !attachedEvmWallets.includes(w.address) || w.address === account.evmWallet
     ).forEach(item => {
-      options.push(<option value={item.id}>{item.address}</option>)
+      options.push(<option key={item.id} value={item.id}>{walletCompactView(item.address)}</option>)
     })
     return options
   }

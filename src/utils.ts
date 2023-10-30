@@ -58,3 +58,7 @@ export function shuffleArray (array: any[]): any[] {
   }
   return array
 }
+
+export function walletCompactView (wallet: string): string {
+  return wallet.slice(0, 5) + '...' + wallet.slice(wallet.length - 5)
+}

@@ -2,7 +2,7 @@ import {
   useMutation, useQuery, useQueryClient,
   type UseMutationResult, type UseQueryResult
 } from '@tanstack/react-query'
-import type { ApiKey, HasId } from '../../interfaces'
+import type { ApiKey, HasId, HasName } from '../../interfaces'
 import { apiKeyStoreAPI } from '../api/store.service'
 
 // Queries:
@@ -23,13 +23,13 @@ export function useGetApiKey (id: string): UseQueryResult<ApiKey, unknown> {
 
 // Mutations:
 
-export function useCreateApiKeyMut (): UseMutationResult<ApiKey, unknown, Partial<ApiKey>, unknown> {
+export function useCreateApiKeyMut (): UseMutationResult<ApiKey, unknown, Partial<ApiKey> & HasName, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (partialAccount) => { return await apiKeyStoreAPI.create(partialAccount) },
-    onSuccess: newAccount => {
+    onSuccess: async (newAccount) => {
       queryClient.setQueryData(['api-keys', newAccount.id], newAccount)
-      queryClient.invalidateQueries(['api-keys'], { exact: true })
+      await queryClient.invalidateQueries(['api-keys'], { exact: true })
     }
   })
 }
@@ -48,8 +48,8 @@ export function useDeleteApiKeyMut (): UseMutationResult<void, unknown, string, 
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (id: string) => { await apiKeyStoreAPI.delete(id) },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['api-keys'], { exact: true })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['api-keys'], { exact: true })
     }
   })
 }
@@ -58,8 +58,8 @@ export function useDeleteApiKeysMut (): UseMutationResult<void, unknown, void, u
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async () => { await apiKeyStoreAPI.deleteAll() },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['api-keys'], { exact: true })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['api-keys'], { exact: true })
     }
   })
 }

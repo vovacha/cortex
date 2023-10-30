@@ -2,7 +2,7 @@ import {
   useMutation, useQuery, useQueryClient,
   type UseMutationResult, type UseQueryResult
 } from '@tanstack/react-query'
-import type { Group, HasId } from '../../interfaces'
+import type { Group, HasId, HasName } from '../../interfaces'
 import { accountGroupStoreAPI } from '../api/store.service'
 
 // Queries:
@@ -23,13 +23,13 @@ export function useGetAccountGroup (id: string): UseQueryResult<Group, unknown> 
 
 // Mutations:
 
-export function useCreateAccountGroupMut (): UseMutationResult<Group, unknown, Partial<Group>, unknown> {
+export function useCreateAccountGroupMut (): UseMutationResult<Group, unknown, Partial<Group> & HasName, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (partialAccount) => { return await accountGroupStoreAPI.create(partialAccount) },
-    onSuccess: newAccount => {
+    onSuccess: async (newAccount) => {
       queryClient.setQueryData(['accountGroups', newAccount.id], newAccount)
-      queryClient.invalidateQueries(['accountGroups'], { exact: true })
+      await queryClient.invalidateQueries(['accountGroups'], { exact: true })
     }
   })
 }
@@ -48,8 +48,8 @@ export function useDeleteAccountGroupMut (): UseMutationResult<void, unknown, st
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (id: string) => { await accountGroupStoreAPI.delete(id) },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['accountGroups'], { exact: true })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['accountGroups'], { exact: true })
     }
   })
 }
@@ -58,8 +58,8 @@ export function useDeleteAccountGroupsMut (): UseMutationResult<void, unknown, v
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async () => { await accountGroupStoreAPI.deleteAll() },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['accountGroups'], { exact: true })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['accountGroups'], { exact: true })
     }
   })
 }

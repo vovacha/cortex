@@ -2,7 +2,7 @@ import {
   useMutation, useQuery, useQueryClient,
   type UseMutationResult, type UseQueryResult
 } from '@tanstack/react-query'
-import type { Account, HasId } from '../../interfaces'
+import type { Account, HasId, HasName } from '../../interfaces'
 import { accountStoreAPI } from '../api/store.service'
 
 // Queries:
@@ -11,6 +11,18 @@ export function useGetAccounts (): UseQueryResult<Account[], unknown> {
   return useQuery({
     queryKey: ['accounts'],
     queryFn: async () => await accountStoreAPI.getAll()
+  })
+}
+
+export function useGetAccountsByGroup (groupId: string | undefined): UseQueryResult<Account[], unknown> {
+  return useQuery({
+    queryKey: ['accounts', 'group', groupId],
+    queryFn: async () => {
+      const accounts = await accountStoreAPI.getAll()
+      return (groupId !== undefined)
+        ? accounts.filter((a) => a.group === groupId ? a : null)
+        : accounts
+    }
   })
 }
 
@@ -23,13 +35,13 @@ export function useGetAccount (id: string): UseQueryResult<Account, unknown> {
 
 // Mutations:
 
-export function useCreateAccountMut (): UseMutationResult<Account, unknown, Partial<Account>, unknown> {
+export function useCreateAccountMut (): UseMutationResult<Account, unknown, Partial<Account> & HasName, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (partialAccount) => { return await accountStoreAPI.create(partialAccount) },
-    onSuccess: newAccount => {
+    onSuccess: async (newAccount) => {
       queryClient.setQueryData(['accounts', newAccount.id], newAccount)
-      queryClient.invalidateQueries(['accounts'], { exact: true })
+      await queryClient.invalidateQueries(['accounts'], { exact: true })
     }
   })
 }
@@ -38,8 +50,9 @@ export function useUpdateAccountMut (): UseMutationResult<Account, unknown, Part
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (partialAccount) => { return await accountStoreAPI.update(partialAccount) },
-    onSuccess: updatedAccount => {
+    onSuccess: async (updatedAccount) => {
       queryClient.setQueryData(['accounts', updatedAccount.id], updatedAccount)
+      // await queryClient.invalidateQueries(['accounts'], { exact: true })
     }
   })
 }
@@ -48,8 +61,8 @@ export function useDeleteAccountMut (): UseMutationResult<void, unknown, string,
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (id: string) => { await accountStoreAPI.delete(id) },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['accounts'], { exact: true })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['accounts'], { exact: true })
     }
   })
 }
@@ -58,8 +71,8 @@ export function useDeleteAccountsMut (): UseMutationResult<void, unknown, void, 
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async () => { await accountStoreAPI.deleteAll() },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['accounts'], { exact: true })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['accounts'], { exact: true })
     }
   })
 }

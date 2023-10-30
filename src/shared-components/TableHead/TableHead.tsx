@@ -1,5 +1,5 @@
 interface Props {
-  columns: string[]
+  columns: Array<string | JSX.Element>
 }
 
 export function TableHead ({ columns }: Props): JSX.Element {

@@ -1,4 +1,4 @@
-import type { Account, Group, Wallet, ApiKey, HasId } from '../../interfaces'
+import type { Account, Group, Wallet, ApiKey, HasId, HasName } from '../../interfaces'
 import { type BaseStore, accountStore, accountGroupStore, walletStore, apiKeyStore } from '../store/store'
 
 // TODO: implement singleton factory method
@@ -17,7 +17,7 @@ abstract class BaseStoreAPI<T extends HasId> {
     return await this.store.getAll()
   }
 
-  public async create (data: Partial<T>): Promise<T> {
+  public async create (data: Partial<T> & HasName): Promise<T> {
     return await this.store.create(data)
   }
 

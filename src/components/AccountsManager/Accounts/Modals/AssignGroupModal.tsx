@@ -1,19 +1,15 @@
 import { useState } from 'react'
-import type { Account } from '../../../interfaces'
-import { Button, Select } from '../../../shared-components'
-import { useUpdateAccountMut, useGetAccountGroups } from '../../../services/queries'
+import type { Account, ModalContentProps } from '@/interfaces'
+import { Button, Select } from '@/shared-components'
+import { useUpdateAccountMut, useGetAccountGroups } from '@/services/queries'
 
-interface Props {
-  openModal: Account[]
-  setOpenModal: React.Dispatch<React.SetStateAction<Account[] | false>>
-}
+type Props = Omit<ModalContentProps, 'state'> & { state: Account[] }
 
-const CHOOSE = 'Choose'
-
-export function AssignGroupModal ({ openModal: accounts, setOpenModal }: Props): JSX.Element {
+export function AssignGroupModal ({ state: accounts, setShowModal }: Props): JSX.Element {
   const [group, setGroup] = useState()
   const updateAccount = useUpdateAccountMut()
   const groups = useGetAccountGroups().data ?? []
+  const CHOOSE = 'Choose'
 
   function getGroupsOptions (): JSX.Element[] {
     const options: JSX.Element[] = []
@@ -29,7 +25,7 @@ export function AssignGroupModal ({ openModal: accounts, setOpenModal }: Props):
       account.group = group
       await updateAccount.mutateAsync(account)
     }
-    setOpenModal(false)
+    setShowModal(false)
   }
 
   return <>

@@ -1,33 +1,34 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { LinkIcon, PlusSmallIcon, Squares2X2Icon } from '@heroicons/react/24/outline'
-import { useAuth } from '../../../hooks/useAuth'
-import { accountManagerMenu as menu } from '../../../routes'
-import { Button, Header, Modal, TableHead } from '../../../shared-components'
-import { CreateAccountsModal, LinkWalletModal, AccountGroups } from './index'
-import type { Account } from '../../../interfaces'
+
+import { useAuth } from '@/hooks/useAuth'
+import { accountManagerMenu as menu } from '@/routes'
+import { Button, Header, Modal, TableHead, EmptyData, Checkbox, InputEdit } from '@/shared-components'
 import {
   useDeleteAccountMut, useGetAccountGroups, useGetAccountsByGroup,
   useGetWallets, useSignOutMut, useUpdateAccountMut
-} from '../../../services/queries'
-import { InputEdit } from '../../../shared-components/InputEdit'
-import { Checkbox } from '../../../shared-components/Checkbox'
-import { AssignGroupModal } from './AssignGroupModal'
+} from '@/services/queries'
+import type { Account } from '@/interfaces'
+
+import { CreateAccountsModal, LinkWalletModal, AssignGroupModal } from './Modals'
+import { AccountGroups } from './index'
 
 export function Accounts (): JSX.Element {
   const groupId = useParams().groupId
-  // Modal States
+  // Modal states
   const [addAccountModal, setAddAccountModal] = useState(false)
-  const [linkWalletModal, setLinkWalletModal] = useState<Account | false>(false)
-  const [assignGroupModal, setAssignGroupModal] = useState<Account[] | false>(false)
-  // States
+  const [assignGroupModal, setAssignGroupModal] = useState(false)
+  const [linkWalletModal, setLinkWalletModal] = useState(false)
+  const [linkWalletAccount, setLinkWalletAccount] = useState<Account>()
+  // Selected checkboxes states
   const [selectedAccounts, setSelectedAccounts] = useState<boolean[]>([])
-  const [namesState, setNamesState] = useState<string[]>([])
-  const [selectAllCheckbox, setSelectAllCheckbox] = useState(false)
-  const [anySelected, setAnySelected] = useState(false)
+  const [isSelectedAll, setIsSelectedAll] = useState(false)
+  const [isAnySelected, setIsAnySelected] = useState(false)
+  // In-place edit names state
+  const [accountNames, setAccountNames] = useState<string[]>([])
   // Fetchers
   const getAccounts = useGetAccountsByGroup(groupId)
-  const accounts = getAccounts.data ?? []
   const groups = useGetAccountGroups().data ?? []
   const wallets = useGetWallets().data ?? []
   // Mutations
@@ -35,14 +36,15 @@ export function Accounts (): JSX.Element {
   const updateAccount = useUpdateAccountMut()
 
   useEffect(() => {
-    if (!getAccounts.isLoading && getAccounts.data !== undefined) {
-      setNamesState(getAccounts.data.map((a) => a.name))
+    if (getAccounts.isLoading === false && getAccounts.data !== undefined) {
+      setAccountNames(getAccounts.data.map((a) => a.name))
       setSelectedAccounts(getAccounts.data.map(() => false))
+      setIsSelectedAll(false)
     }
   }, [getAccounts.data, getAccounts.isLoading])
 
   useEffect(() => {
-    selectedAccounts.includes(true) ? setAnySelected(true) : setAnySelected(false)
+    selectedAccounts.includes(true) ? setIsAnySelected(true) : setIsAnySelected(false)
   }, [selectedAccounts])
 
   // TODO: simplify to one call: auth.signOut()
@@ -52,34 +54,33 @@ export function Accounts (): JSX.Element {
     signOut.mutate()
     auth.signOut()
   }
-  const isLoading = accounts.length === selectedAccounts.length &&
-                    accounts.length === namesState.length
 
-  async function deleteSelected (): Promise<void> {
+  const accounts = getAccounts.data ?? []
+  const isLoading = accounts.length === selectedAccounts.length &&
+    accounts.length === accountNames.length
+
+  async function selectedDeleteOnClick (): Promise<void> {
     for (let i = 0; i < selectedAccounts.length; i++) {
       if (selectedAccounts[i]) {
-        await deleteAccount.mutateAsync(accounts[i].id)
+        deleteAccount.mutate(accounts[i].id)
         selectedAccounts[i] = false
       }
     }
   }
-  function assignGroupSelected (): void {
-    setAssignGroupModal(accounts.filter((account, i) => selectedAccounts[i] ? account : null))
-    // TODO: the line below is a quick fix. useEffect(...[accounts])
-    //  should deselect all, but doesn't work
+
+  function selectedGroupOnClick (): void {
+    setAssignGroupModal(true)
     setSelectedAccounts(accounts.map(() => false))
-  }
-  function processSelectAll (): void {
-    if (selectAllCheckbox) {
-      setSelectedAccounts(selectedAccounts.map(() => false))
-    } else {
-      setSelectedAccounts(selectedAccounts.map(() => true))
-    }
-    setSelectAllCheckbox(!selectAllCheckbox)
+    setIsSelectedAll(false)
   }
 
-  const selectAllInput = <Checkbox index={0} name='checkbox-all'
-    isChecked={selectAllCheckbox} onChange={processSelectAll}/>
+  const selectAllCheckbox = <Checkbox index={0} name='checkbox-all'
+    isChecked={isSelectedAll} onChange={() => {
+      isSelectedAll
+        ? setSelectedAccounts(selectedAccounts.map(() => false))
+        : setSelectedAccounts(selectedAccounts.map(() => true))
+      setIsSelectedAll(!isSelectedAll)
+    }}/>
 
   const tableRows = (): JSX.Element[] => accounts.map((account, i) => (
     <tr className='group odd:bg-gray-900 even:bg-slate-900 hover:bg-slate-800' key={i}>
@@ -92,11 +93,11 @@ export function Accounts (): JSX.Element {
       </td>
       <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>{i + 1}</td>
       <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
-        <InputEdit index={i} name='account-name' value={namesState[i]}
+        <InputEdit index={i} name='account-name' value={accountNames[i]}
           onChange={(name) => {
-            setNamesState(namesState.map((oldName, j) => j === i ? name : oldName))
+            setAccountNames(accountNames.map((oldName, j) => j === i ? name : oldName))
           }}
-          onBlur={ (name = namesState[i]) => { void updateAccount.mutateAsync({ ...account, name }) }} />
+          onBlur={ (name = accountNames[i]) => { void updateAccount.mutateAsync({ ...account, name }) }} />
       </td>
       {groupId === undefined
         ? <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
@@ -105,7 +106,10 @@ export function Accounts (): JSX.Element {
         : null
       }
       <td className='whitespace-nowrap px-3 py-2 text-sm text-gray-300'>
-        <span onClick={() => { setLinkWalletModal(account) }} className='cursor-pointer inline-block'>
+        <span onClick={() => {
+          setLinkWalletModal(true)
+          setLinkWalletAccount(account)
+        }} className='cursor-pointer inline-block'>
         {wallets.find((w) => w.id === account.evmWallet)?.address ??
           <LinkIcon className='h-4 w-4' aria-hidden='true' />}</span>
       </td>
@@ -115,51 +119,40 @@ export function Accounts (): JSX.Element {
     </tr>
   ))
 
-  const isDevelopment = import.meta.env.VITE_DEVELOPMENT === 'true'
   return (<>
     <Header menu={menu}/>
-    <main className=''>
-      <AccountGroups groups={groups} currentGroup={groupId}/>
-      <div className='bg-gray-900'>
-        <div className='mx-auto max-w-7xl'>
-            <div className='px-4 sm:px-6 lg:px-8'>
-              <div className='mt-8 flow-root'>
-                <div className='-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
-                  <div className='inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8'>
-                    {Array.isArray(accounts) && accounts.length > 0
-                      ? (
-                      <table className='min-w-full divide-y divide-gray-700'>
-                        {groupId === undefined
-                          ? <TableHead columns={[selectAllInput, '#', 'Name', 'Group', 'EVM Wallet', 'Starknet Wallet']}/>
-                          : <TableHead columns={[selectAllInput, '#', 'Name', 'EVM Wallet', 'Starknet Wallet']}/>
-                        }
-                        <tbody className='divide-y divide-gray-800'>{(isLoading) ? tableRows() : null}</tbody>
-                      </table>
-                        )
-                      : null}
-                      {/* TODO: use empty table template https://github.com/ConciergeApplication/concierge/issues/22 */}
-                  </div>
-                </div>
-              </div>
-            </div>
+    <AccountGroups groups={groups} currentGroupId={groupId}/>
+    <div className='bg-gray-900 px-4 sm:px-6 lg:px-8'>
+      <div className='mt-8 flow-root'>
+        <div className='-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
+          <div className='inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8'>
+            { accounts.length > 0
+              ? (
+              <table className='min-w-full divide-y divide-gray-700'>
+                {groupId === undefined
+                  ? <TableHead columns={[selectAllCheckbox, '#', 'Name', 'Group', 'EVM Wallet', 'Starknet Wallet']}/>
+                  : <TableHead columns={[selectAllCheckbox, '#', 'Name', 'EVM Wallet', 'Starknet Wallet']}/>
+                }
+                <tbody className='divide-y divide-gray-800'>{(isLoading) ? tableRows() : null}</tbody>
+              </table>
+                )
+              : <EmptyData title='No Accounts' message='Get started by creating a new Account'/>}
+          </div>
         </div>
       </div>
-    </main>
-    <Modal openModal={ addAccountModal } setOpenModal={ setAddAccountModal } Content={ CreateAccountsModal } />
-    <Modal openModal={ linkWalletModal } setOpenModal={ setLinkWalletModal } Content={ LinkWalletModal } />
-    <Modal openModal={ assignGroupModal } setOpenModal={ setAssignGroupModal } Content={ AssignGroupModal } />
+    </div>
+    <Modal showModal={ addAccountModal } setShowModal={ setAddAccountModal } Content={ CreateAccountsModal } />
+    <Modal showModal={ linkWalletModal } setShowModal={ setLinkWalletModal } state={linkWalletAccount} Content={ LinkWalletModal } />
+    <Modal showModal={ assignGroupModal } setShowModal={ setAssignGroupModal }
+      state={accounts.filter((account, i) => selectedAccounts[i] ? account : null)} Content={ AssignGroupModal } />
     <div className='fixed bottom-0 p-2 pl-5'>
         <Button onClick={() => { setAddAccountModal(true) }}
           text={ <><PlusSmallIcon className='inline h-4 w-4' aria-hidden='true' /> Accounts</>} />
-        {(isDevelopment)
-          ? <>
-            <Button onClick={ () => { void executeSignOut() } } text='Sign Out' type='secondary'/></>
-          : null
-        }
-        <Button disabled={!anySelected} onClick={assignGroupSelected}
+        <Button disabled={!isAnySelected} onClick={selectedGroupOnClick}
           text={ <><Squares2X2Icon className='inline h-4 w-4' aria-hidden='true' /> Assign Group</>} />
-        <Button disabled={!anySelected} onClick={() => { void deleteSelected() }} type='danger'
+        <Button disabled={!isAnySelected} onClick={() => { void selectedDeleteOnClick() }} type='danger'
           text={ <><Squares2X2Icon className='inline h-4 w-4' aria-hidden='true' /> Delete</>} />
+        <Button onClick={ () => { void executeSignOut() } } text='Sign Out' type='secondary'/>
     </div>
     </>
   )

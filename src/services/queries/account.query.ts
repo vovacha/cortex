@@ -7,13 +7,6 @@ import { accountStoreAPI } from '../api/store.service'
 
 // Queries:
 
-export function useGetAccounts (): UseQueryResult<Account[], unknown> {
-  return useQuery({
-    queryKey: ['accounts'],
-    queryFn: async () => await accountStoreAPI.getAll()
-  })
-}
-
 export function useGetAccountsByGroup (groupId: string | undefined): UseQueryResult<Account[], unknown> {
   return useQuery({
     queryKey: ['accounts', 'group', groupId],
@@ -41,7 +34,7 @@ export function useCreateAccountMut (): UseMutationResult<Account, unknown, Part
     mutationFn: async (partialAccount) => { return await accountStoreAPI.create(partialAccount) },
     onSuccess: async (newAccount) => {
       queryClient.setQueryData(['accounts', newAccount.id], newAccount)
-      await queryClient.invalidateQueries(['accounts'], { exact: true })
+      await queryClient.invalidateQueries(['accounts', 'group', newAccount.group], { exact: true })
     }
   })
 }
@@ -52,7 +45,8 @@ export function useUpdateAccountMut (): UseMutationResult<Account, unknown, Part
     mutationFn: async (partialAccount) => { return await accountStoreAPI.update(partialAccount) },
     onSuccess: async (updatedAccount) => {
       queryClient.setQueryData(['accounts', updatedAccount.id], updatedAccount)
-      // await queryClient.invalidateQueries(['accounts'], { exact: true })
+      // TODO: do we need an invalidation here?
+      // await queryClient.invalidateQueries(['accounts', 'group'])
     }
   })
 }
@@ -62,7 +56,9 @@ export function useDeleteAccountMut (): UseMutationResult<void, unknown, string,
   return useMutation({
     mutationFn: async (id: string) => { await accountStoreAPI.delete(id) },
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['accounts'], { exact: true })
+      // TODO: this is redundant, update only new and old account group lists
+      // use onSuccess at the component's side
+      await queryClient.invalidateQueries(['accounts', 'group'])
     }
   })
 }
@@ -72,7 +68,7 @@ export function useDeleteAccountsMut (): UseMutationResult<void, unknown, void, 
   return useMutation({
     mutationFn: async () => { await accountStoreAPI.deleteAll() },
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['accounts'], { exact: true })
+      await queryClient.invalidateQueries(['accounts', 'group'])
     }
   })
 }

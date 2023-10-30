@@ -1,15 +1,12 @@
 import { useState } from 'react'
-import { Button, Input } from '../../../shared-components'
-import type { HasName, Wallet } from '../../../interfaces'
-import { generateWallet } from '../../../web3'
-import { encryptWithAES } from '../../../utils'
-import { useCreateWalletMut } from '../../../services/queries'
 
-interface ModalProps {
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
-}
+import { Button, Input } from '@/shared-components'
+import type { HasName, ModalContentProps, Wallet } from '@/interfaces'
+import { generateWallet } from '@/web3'
+import { encryptWithAES } from '@/utils'
+import { useCreateWalletMut } from '@/services/queries'
 
-export default function GenerateWalletsModal ({ setOpenModal }: ModalProps): JSX.Element {
+export default function GenerateWalletsModal ({ setShowModal }: ModalContentProps): JSX.Element {
   const [walletNumber, setWalletNumber] = useState(1)
   const [walletName, setWalletName] = useState('')
   const createWallet = useCreateWalletMut()
@@ -21,7 +18,7 @@ export default function GenerateWalletsModal ({ setOpenModal }: ModalProps): JSX
       w.name = walletName
       await createWallet.mutateAsync(w as Partial<Wallet> & HasName)
     }
-    setOpenModal(false)
+    setShowModal(false)
   }
   return <>
           <div className='grid grid-cols-6 gap-x-6 gap-y-8'>

@@ -26,9 +26,9 @@ export function useGetAccountGroup (id: string): UseQueryResult<Group, unknown> 
 export function useCreateAccountGroupMut (): UseMutationResult<Group, unknown, Partial<Group> & HasName, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (partialAccount) => { return await accountGroupStoreAPI.create(partialAccount) },
-    onSuccess: async (newAccount) => {
-      queryClient.setQueryData(['accountGroups', newAccount.id], newAccount)
+    mutationFn: async (partialGroup) => { return await accountGroupStoreAPI.create(partialGroup) },
+    onSuccess: async (newGroup) => {
+      queryClient.setQueryData(['accountGroups', newGroup.id], newGroup)
       await queryClient.invalidateQueries(['accountGroups'], { exact: true })
     }
   })
@@ -38,8 +38,8 @@ export function useUpdateAccountGroupMut (): UseMutationResult<Group, unknown, P
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (partialAccount) => { return await accountGroupStoreAPI.update(partialAccount) },
-    onSuccess: updatedAccount => {
-      queryClient.setQueryData(['accountGroups', updatedAccount.id], updatedAccount)
+    onSuccess: updatedGroup => {
+      queryClient.setQueryData(['accountGroups', updatedGroup.id], updatedGroup)
     }
   })
 }

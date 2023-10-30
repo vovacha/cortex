@@ -1,12 +1,9 @@
 import { useState } from 'react'
-import { Button, Input } from '../../../shared-components'
-import { useCreateAccountMut } from '../../../services/queries'
+import { Button, Input } from '@/shared-components'
+import { useCreateAccountMut } from '@/services/queries'
+import type { ModalContentProps } from '@/interfaces'
 
-interface CreateAccountsModalProps {
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-export function CreateAccountsModal ({ setOpenModal }: CreateAccountsModalProps): JSX.Element {
+export function CreateAccountsModal ({ setShowModal }: ModalContentProps): JSX.Element {
   const [accountNumber, setAccountNumber] = useState(1)
   const [accountName, setAccountName] = useState('')
   const createAccount = useCreateAccountMut()
@@ -15,7 +12,7 @@ export function CreateAccountsModal ({ setOpenModal }: CreateAccountsModalProps)
     for (let i = 1; i <= accountNumber; i++) {
       await createAccount.mutateAsync({ name: accountName })
     }
-    setOpenModal(false)
+    setShowModal(false)
   }
 
   return <>

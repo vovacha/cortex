@@ -1,21 +1,17 @@
 import { useState } from 'react'
-import type { Account } from '../../../interfaces'
-import { Button, Select } from '../../../shared-components'
-import { useUpdateAccountMut, useGetWallets } from '../../../services/queries'
-import { walletCompactView } from '../../../utils'
+import type { Account, ModalContentProps } from '@/interfaces'
+import { Button, Select } from '@/shared-components'
+import { useUpdateAccountMut, useGetWallets } from '@/services/queries'
+import { walletCompactView } from '@/utils'
 
-interface Props {
-  openModal: Account
-  setOpenModal: React.Dispatch<React.SetStateAction<Account | false>>
-}
+type Props = Omit<ModalContentProps, 'state'> & { state: Account }
 
-const CHOOSE = 'Choose'
-
-export function LinkWalletModal ({ openModal: account, setOpenModal }: Props): JSX.Element {
+export function LinkWalletModal ({ state: account, setShowModal }: Props): JSX.Element {
   const [wallet, setWallet] = useState(account.evmWallet)
   const updateAccount = useUpdateAccountMut()
   const wallets = useGetWallets().data ?? []
   const attachedEvmWallets: string[] = []
+  const CHOOSE = 'Choose'
 
   function getWalletsOptions (): JSX.Element[] {
     const options: JSX.Element[] = []
@@ -32,7 +28,7 @@ export function LinkWalletModal ({ openModal: account, setOpenModal }: Props): J
   function editAccount (): void {
     account.evmWallet = wallet
     updateAccount.mutate(account)
-    setOpenModal(false)
+    setShowModal(false)
   }
 
   return <>

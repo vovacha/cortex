@@ -1,12 +1,9 @@
 import { useState } from 'react'
-import { Button, Input } from '../../../shared-components'
-import { useCreateAccountGroupMut } from '../../../services/queries'
+import { Button, Input } from '@/shared-components'
+import { useCreateAccountGroupMut } from '@/services/queries'
+import type { ModalContentProps } from '@/interfaces'
 
-interface Props {
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-export function CreateAccountGroupModal ({ setOpenModal }: Props): JSX.Element {
+export function CreateGroupModal ({ setShowModal }: ModalContentProps): JSX.Element {
   const [groupName, setGroupName] = useState('')
   const createGroup = useCreateAccountGroupMut()
 
@@ -16,7 +13,7 @@ export function CreateAccountGroupModal ({ setOpenModal }: Props): JSX.Element {
     <div className='sm:col-span-3'>
       <Button onClick={ () => {
         createGroup.mutate({ name: groupName })
-        setOpenModal(false)
+        setShowModal(false)
       }} text='Add Group' />
     </div>
   </div>

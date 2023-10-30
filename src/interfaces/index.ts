@@ -1,8 +1,3 @@
-export interface LogRecord {
-  message: string
-  date: Date
-}
-
 export interface TransactionReceipt {
   address: string
   balance: string
@@ -37,6 +32,11 @@ export interface Group {
 export interface Result {
   success: boolean
   message: string
+}
+
+export interface ModalContentProps {
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>
+  state: any
 }
 
 export * from './accounts'

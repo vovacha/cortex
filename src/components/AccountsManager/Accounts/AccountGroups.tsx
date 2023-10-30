@@ -1,22 +1,24 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { PencilSquareIcon, PlusSmallIcon } from '@heroicons/react/24/solid'
-import { Button, Modal } from '../../../shared-components'
-import { CreateAccountGroupModal } from './index'
-import { classNames } from '../../../utils'
-import type { Group } from '../../../interfaces'
+import classNames from 'classnames'
+
+import { Button, Modal } from '@/shared-components'
+import { CreateGroupModal, EditGroupModal } from './Modals'
+import type { Group } from '@/interfaces'
 
 interface Props {
-  currentGroup?: string
+  currentGroupId?: string
   groups: Group[]
 }
 
-export function AccountGroups ({ currentGroup, groups }: Props): JSX.Element {
-  const [addAccountGroupModal, setAddAccountGroupModal] = useState(false)
+export function AccountGroups ({ currentGroupId, groups }: Props): JSX.Element {
+  const [addGroupModal, setAddGroupModal] = useState(false)
+  const [editGroupModal, setEditGroupModal] = useState(false)
 
   // TODO: Remove hardcoded links
   const accountsUrl = (groupId: string): string => `/accounts-manager/accounts/${groupId}`
-  const groupsItems = groups?.map((group) =>
+  const groupsLinks = groups.map((group) =>
     <NavLink key={group.id} to={accountsUrl(group.id)} className={
         (navData) => classNames(navData.isActive ? 'text-indigo-400' : 'text-gray-400')}>
       {group.name}
@@ -30,14 +32,18 @@ export function AccountGroups ({ currentGroup, groups }: Props): JSX.Element {
     <NavLink end key='all' to='/accounts-manager/accounts' className={(navData) => classNames(navData.isActive ? 'text-indigo-400' : 'text-gray-400')}>
       All
     </NavLink>
-    { groupsItems }
+    { groupsLinks }
     </div>
-    { currentGroup !== undefined
-      ? <Button onClick={() => { }} text={ <PencilSquareIcon className='inline h-4 w-4' aria-hidden='true' /> } type='secondary' classNames='cursor-not-allowed ml-auto'/>
+    { currentGroupId !== undefined
+      ? <Button onClick={() => { setEditGroupModal(true) }} text={ <PencilSquareIcon className='inline h-4 w-4' aria-hidden='true' /> }
+        type='secondary'classNames='ml-auto'/>
       : null }
-    <Button onClick={() => { setAddAccountGroupModal(true) }} text={ <><PlusSmallIcon className='inline h-4 w-4' aria-hidden='true' /> Group</>} classNames={currentGroup === undefined ? 'ml-auto' : ''}/>
+    <Button onClick={() => { setAddGroupModal(true) }} text={ <><PlusSmallIcon className='inline h-4 w-4' aria-hidden='true' /> Group</>}
+      classNames={currentGroupId === undefined ? 'ml-auto' : ''}/>
+      {/* TODO: fix Buttons margins and "ml-auto" usage */}
   </div>
-  <Modal openModal={addAccountGroupModal} setOpenModal={setAddAccountGroupModal} Content={ CreateAccountGroupModal } />
+  <Modal showModal={addGroupModal} setShowModal={setAddGroupModal} Content={ CreateGroupModal } />
+  <Modal showModal={editGroupModal} setShowModal={setEditGroupModal} state={currentGroupId} Content={ EditGroupModal } />
 </header>
 </>
 }

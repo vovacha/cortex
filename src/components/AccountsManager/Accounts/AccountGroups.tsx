@@ -17,10 +17,9 @@ export function AccountGroups ({ currentGroupId, groups }: Props): JSX.Element {
   const [editGroupModal, setEditGroupModal] = useState(false)
 
   // TODO: Remove hardcoded links
-  const accountsUrl = (groupId: string): string => `/accounts-manager/accounts/${groupId}`
   const groupsLinks = groups.map((group) =>
-    <NavLink key={group.id} to={accountsUrl(group.id)} className={
-        (navData) => classNames(navData.isActive ? 'text-indigo-400' : 'text-gray-400')}>
+    <NavLink key={group.id} to={`/accounts-manager/accounts/${group.id}`} className={
+        ({ isActive }) => classNames(isActive ? 'text-indigo-400' : 'text-gray-400')}>
       {group.name}
     </NavLink>
   )
@@ -34,13 +33,14 @@ export function AccountGroups ({ currentGroupId, groups }: Props): JSX.Element {
     </NavLink>
     { groupsLinks }
     </div>
+    <div className='ml-auto'>
     { currentGroupId !== undefined
       ? <Button onClick={() => { setEditGroupModal(true) }} text={ <PencilSquareIcon className='inline h-4 w-4' aria-hidden='true' /> }
-        type='secondary'classNames='ml-auto'/>
+        type='secondary'/>
       : null }
-    <Button onClick={() => { setAddGroupModal(true) }} text={ <><PlusSmallIcon className='inline h-4 w-4' aria-hidden='true' /> Group</>}
-      classNames={currentGroupId === undefined ? 'ml-auto' : ''}/>
+    <Button onClick={() => { setAddGroupModal(true) }} text={ <><PlusSmallIcon className='inline h-4 w-4' aria-hidden='true' /> Group</>}/>
       {/* TODO: fix Buttons margins and "ml-auto" usage */}
+    </div>
   </div>
   <Modal showModal={addGroupModal} setShowModal={setAddGroupModal} Content={ CreateGroupModal } />
   <Modal showModal={editGroupModal} setShowModal={setEditGroupModal} state={currentGroupId} Content={ EditGroupModal } />

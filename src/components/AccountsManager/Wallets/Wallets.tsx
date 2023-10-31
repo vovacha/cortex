@@ -5,7 +5,7 @@ import {
 
 import { Modal, Button, Header, TableHead, EmptyData, Checkbox, InputEdit } from '@/shared-components'
 import { accountManagerMenu as menu } from '@/routes'
-import { useGetWallets, useCreateWalletMut, useUpdateWalletMut, useDeleteWalletMut } from '@/services/queries'
+import { useGetWallets, useCreateWalletMut, useUpdateWalletMut, useDeleteWalletMut, useGetAccount, useGetAccountsByGroup } from '@/services/queries'
 import type { HasName, Wallet } from '@/interfaces'
 
 import { readWalletsFromFile } from './readWalletsFromFile'
@@ -23,6 +23,7 @@ export function Wallets (): JSX.Element {
   const [walletNames, setWalletNames] = useState<string[]>([])
   // Fetchers
   const getWallets = useGetWallets()
+  const accounts = useGetAccountsByGroup(undefined).data ?? []
   // Mutations
   const createWallet = useCreateWalletMut()
   const updateWallet = useUpdateWalletMut()
@@ -44,6 +45,15 @@ export function Wallets (): JSX.Element {
     selectedWallets.includes(true) ? setIsAnySelected(true) : setIsAnySelected(false)
   }, [selectedWallets])
 
+  function isLinkedToAccount (walletId: string): boolean {
+    for (const account of accounts) {
+      if (account.evmWallet === walletId) {
+        return true
+      }
+    }
+    return false
+  }
+
   async function importPrivateKeys (): Promise<void> {
     for (const wallet of await readWalletsFromFile()) {
       await createWallet.mutateAsync(wallet as Partial<Wallet> & HasName)
@@ -53,8 +63,11 @@ export function Wallets (): JSX.Element {
   async function selectedDeleteOnClick (): Promise<void> {
     for (let i = 0; i < selectedWallets.length; i++) {
       if (selectedWallets[i]) {
-        deleteWallet.mutate(wallets[i].id)
-        selectedWallets[i] = false
+        // TODO: optimisation. This is O(N^2)
+        // TODO: show warning "Wallet is attached to an account"
+        if (!isLinkedToAccount(wallets[i].id)) {
+          deleteWallet.mutate(wallets[i].id)
+        }
       }
     }
   }

@@ -1,14 +1,10 @@
 import { useState } from 'react'
-import { Button, Input, Select } from '../../../shared-components'
-import { Exchanges } from '../../../interfaces'
-import { enumKeys } from '../../../utils'
-import { useCreateApiKeyMut } from '../../../services/queries'
+import { Button, Input, Select } from '@/shared-components'
+import { Exchanges, type ModalContentProps } from '@/interfaces'
+import { enumKeys } from '@/utils'
+import { useCreateApiKeyMut } from '@/services/queries'
 
-interface Props {
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-export default function CreateApiKeyModal ({ setOpenModal }: Props): JSX.Element {
+export default function CreateApiKeyModal ({ setShowModal }: ModalContentProps): JSX.Element {
   const [apiKey, setApiKey] = useState('')
   const [secretKey, setSecretKey] = useState('')
   const [passphrase, setPassphrase] = useState('')
@@ -27,7 +23,7 @@ export default function CreateApiKeyModal ({ setOpenModal }: Props): JSX.Element
   function apiKeyCreate (): void {
     if (exchange !== null) {
       createApiKey.mutate({ apiKey, secretKey, passphrase, name, exchange })
-      setOpenModal(false)
+      setShowModal(false)
     }
   }
   return <>

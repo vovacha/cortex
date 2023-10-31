@@ -6,7 +6,6 @@ import { chainNames, validateContract, sendNativeCurrency, sendToken } from '../
 import type { Wallet, WalletWithTargetAddress } from '../../../interfaces'
 
 import { Button, Header } from '../../../shared-components'
-import { Activity } from '../..'
 import { toolsMenu as menu } from '../../../routes'
 
 // TODO: refactor the whole module
@@ -224,7 +223,6 @@ export function Sender (): JSX.Element {
         </div>
       </div>
     </main>
-    <Activity/>
     </>
   )
 }

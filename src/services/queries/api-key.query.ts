@@ -26,9 +26,9 @@ export function useGetApiKey (id: string): UseQueryResult<ApiKey, unknown> {
 export function useCreateApiKeyMut (): UseMutationResult<ApiKey, unknown, Partial<ApiKey> & HasName, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (partialAccount) => { return await apiKeyStoreAPI.create(partialAccount) },
-    onSuccess: async (newAccount) => {
-      queryClient.setQueryData(['api-keys', newAccount.id], newAccount)
+    mutationFn: async (partialKey) => { return await apiKeyStoreAPI.create(partialKey) },
+    onSuccess: async (newKey) => {
+      queryClient.setQueryData(['api-keys', newKey.id], newKey)
       await queryClient.invalidateQueries(['api-keys'], { exact: true })
     }
   })
@@ -37,7 +37,7 @@ export function useCreateApiKeyMut (): UseMutationResult<ApiKey, unknown, Partia
 export function useUpdateApiKeyMut (): UseMutationResult<ApiKey, unknown, Partial<ApiKey> & HasId, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (partialAccount) => { return await apiKeyStoreAPI.update(partialAccount) },
+    mutationFn: async (partialKey) => { return await apiKeyStoreAPI.update(partialKey) },
     onSuccess: updatedAccount => {
       queryClient.setQueryData(['api-keys', updatedAccount.id], updatedAccount)
     }

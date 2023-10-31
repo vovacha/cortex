@@ -152,7 +152,7 @@ export function Accounts (): JSX.Element {
           text={ <><Squares2X2Icon className='inline h-4 w-4' aria-hidden='true' /> Assign Group</>} />
         <Button disabled={!isAnySelected} onClick={() => { void selectedDeleteOnClick() }} type='danger'
           text={ <><Squares2X2Icon className='inline h-4 w-4' aria-hidden='true' /> Delete</>} />
-        <Button onClick={ () => { void executeSignOut() } } text='Sign Out' type='secondary'/>
+        <Button onClick={ () => { void executeSignOut() } } text='Sign Out [DEV]' type='secondary'/>
     </div>
     </>
   )

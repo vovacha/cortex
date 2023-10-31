@@ -26,9 +26,9 @@ export function useGetWallet (id: string): UseQueryResult<Wallet, unknown> {
 export function useCreateWalletMut (): UseMutationResult<Wallet, unknown, Partial<Wallet> & HasName, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (partialAccount) => { return await walletStoreAPI.create(partialAccount) },
-    onSuccess: async (newAccount) => {
-      queryClient.setQueryData(['wallets', newAccount.id], newAccount)
+    mutationFn: async (partialWallet) => { return await walletStoreAPI.create(partialWallet) },
+    onSuccess: async (newWallet) => {
+      queryClient.setQueryData(['wallets', newWallet.id], newWallet)
       await queryClient.invalidateQueries(['wallets'], { exact: true })
     }
   })
@@ -37,9 +37,9 @@ export function useCreateWalletMut (): UseMutationResult<Wallet, unknown, Partia
 export function useUpdateWalletMut (): UseMutationResult<Wallet, unknown, Partial<Wallet> & HasId, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (partialAccount) => { return await walletStoreAPI.update(partialAccount) },
-    onSuccess: updatedAccount => {
-      queryClient.setQueryData(['wallets', updatedAccount.id], updatedAccount)
+    mutationFn: async (partialWallet) => { return await walletStoreAPI.update(partialWallet) },
+    onSuccess: updatedWallet => {
+      queryClient.setQueryData(['wallets', updatedWallet.id], updatedWallet)
     }
   })
 }

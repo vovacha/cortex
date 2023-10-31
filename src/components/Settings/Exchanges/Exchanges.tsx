@@ -1,21 +1,16 @@
 import { useState } from 'react'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
-import { Button, Header, Modal } from '../../../shared-components'
-import { settingsMenu as menu } from '../../../routes'
-import { Exchanges as ExchangesEnum } from '../../../interfaces'
+import { Button, Header, Modal } from '@/shared-components'
+import { settingsMenu as menu } from '@/routes'
+import { Exchanges as ExchangesEnum } from '@/interfaces'
 import CreateApiKeyModal from './CreateApiKeyModal'
-import { useGetApiKeys, useDeleteApiKeysMut } from '../../../services/queries'
+import { useGetApiKeys, useDeleteApiKeysMut } from '@/services/queries'
 
 export function Exchanges (): JSX.Element {
   const [addApiKeyModal, setAddApiKeyModal] = useState(false)
   const deleteAllApiKeys = useDeleteApiKeysMut()
-  const { data: apiKeys, isLoading, error } = useGetApiKeys()
+  const apiKeys = useGetApiKeys().data ?? []
 
-  // TODO: handle loading and exceptions properly
-  if (isLoading) { return <h1 color='white'>Loading</h1> }
-  if (error instanceof Error) { return <h1 color='white'>{error.message}</h1> }
-
-  const isDevelopment = import.meta.env.VITE_DEVELOPMENT === 'true'
   return (<>
     <Header menu={menu}/>
     <main className=''>
@@ -71,13 +66,10 @@ export function Exchanges (): JSX.Element {
         </div>
       </div>
     </main>
-    <Modal openModal={addApiKeyModal} setOpenModal={setAddApiKeyModal} Content={ CreateApiKeyModal } />
+    <Modal showModal={addApiKeyModal} setShowModal={setAddApiKeyModal} Content={ CreateApiKeyModal } />
     <div className="fixed bottom-0 p-6">
         <Button onClick={() => { setAddApiKeyModal(true) }} text="Add API Key" />
-        {(isDevelopment)
-          ? <Button onClick={() => { deleteAllApiKeys.mutate() }} text="Clear API Keys" type="danger" />
-          : null
-        }
+        <Button onClick={() => { deleteAllApiKeys.mutate() }} text="Clear API Keys [DEV]" type="danger" />
     </div>
     </>
   )

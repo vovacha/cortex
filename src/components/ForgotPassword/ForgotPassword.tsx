@@ -15,20 +15,21 @@ export function ForgotPassword (): JSX.Element {
     event.preventDefault()
     forgotPassword.mutate({ username }, {
       onSuccess: () => {
-        navigate({ pathname: `/forgot-password-submit/${username}/` })
-    }})
+        navigate({ pathname: `/forgot-password-submit/${username}` })
+      }
+    })
   }
 
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img className="mx-auto h-10 w-auto" src={logo} alt="Concierge"></img>
+        <img className="mx-auto h-16 w-auto" src={logo} alt="Concierge"></img>
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
             Forgot password
           </h2>
-          <div className="mt-4 text-white text-sm text-center">
-            We'll send verification code to your email.
+          <div className="mt-4 text-gray-400 text-sm text-center">
+            We&apos;ll send a verification code to your email
           </div>
         </div>
 

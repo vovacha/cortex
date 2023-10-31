@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { LinkIcon, PlusSmallIcon, Squares2X2Icon } from '@heroicons/react/24/outline'
 
-import { useAuth } from '@/hooks/useAuth'
 import { accountManagerMenu as menu } from '@/routes'
 import { Button, Header, Modal, TableHead, EmptyData, Checkbox, InputEdit } from '@/shared-components'
 import {
   useDeleteAccountMut, useGetAccountGroups, useGetAccountsByGroup,
-  useGetWallets, useSignOutMut, useUpdateAccountMut
+  useGetWallets, useUpdateAccountMut
 } from '@/services/queries'
 import type { Account } from '@/interfaces'
 
@@ -46,14 +45,6 @@ export function Accounts (): JSX.Element {
   useEffect(() => {
     selectedAccounts.includes(true) ? setIsAnySelected(true) : setIsAnySelected(false)
   }, [selectedAccounts])
-
-  // TODO: simplify to one call: auth.signOut()
-  const signOut = useSignOutMut()
-  const auth = useAuth()
-  const executeSignOut = async (): Promise<void> => {
-    signOut.mutate()
-    auth.signOut()
-  }
 
   const accounts = getAccounts.data ?? []
   const isLoading = accounts.length === selectedAccounts.length &&
@@ -152,7 +143,6 @@ export function Accounts (): JSX.Element {
           text={ <><Squares2X2Icon className='inline h-4 w-4' aria-hidden='true' /> Assign Group</>} />
         <Button disabled={!isAnySelected} onClick={() => { void selectedDeleteOnClick() }} type='danger'
           text={ <><Squares2X2Icon className='inline h-4 w-4' aria-hidden='true' /> Delete</>} />
-        <Button onClick={ () => { void executeSignOut() } } text='Sign Out [DEV]' type='secondary'/>
     </div>
     </>
   )

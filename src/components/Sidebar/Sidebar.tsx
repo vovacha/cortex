@@ -1,12 +1,21 @@
 import { NavLink } from 'react-router-dom'
-import { ChevronRightIcon } from '@heroicons/react/24/outline'
+import { ChevronRightIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
 import { Disclosure } from '@headlessui/react'
 
-import logo from '../../images/logo.png'
-import { classNames } from '../../utils'
-import { menu } from '../../routes'
+import logo from '@/images/logo.png'
+import { classNames } from '@/utils'
+import { menu } from '@/routes'
+import { useSignOutMut } from '@/services/queries'
+import { useAuth } from '@/hooks/useAuth'
 
 export function Sidebar (): JSX.Element {
+  // TODO: simplify to one call: auth.signOut()
+  const signOut = useSignOutMut()
+  const auth = useAuth()
+  const executeSignOut = async (): Promise<void> => {
+    signOut.mutate()
+    auth.signOut()
+  }
   return (
     <>
       <div className='flex h-16 shrink-0 items-center'>
@@ -77,6 +86,16 @@ export function Sidebar (): JSX.Element {
               </li>
               ))}
             </ul>
+          </li>
+          <li className="-mx-6 mt-auto">
+            <a
+              href="#"
+              className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-gray-800"
+              onClick={() => { void executeSignOut() }}
+            >
+              <ArrowLeftOnRectangleIcon className='inline h-5 w-5' aria-hidden='true' />
+              <span aria-hidden="true">Logout</span>
+            </a>
           </li>
         </ul>
       </nav>

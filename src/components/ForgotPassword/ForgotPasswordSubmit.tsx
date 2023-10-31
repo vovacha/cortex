@@ -18,7 +18,8 @@ export function ForgotPasswordSubmit (): JSX.Element {
     forgotPasswordConfirm.mutate({ username, password, code }, {
       onSuccess: () => {
         navigate({ pathname: `/signin/${username}` })
-    }})
+      }
+    })
   }
 
   return (

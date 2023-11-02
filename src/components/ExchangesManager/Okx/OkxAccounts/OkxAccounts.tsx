@@ -20,7 +20,7 @@ export function OkxAccounts (): JSX.Element {
 
   function getBalancesTable (): JSX.Element {
     if (isError) {
-      return <DataState title='Failed to retrieve balances' message={ error.message } state='error'/>
+      return <DataState title='Failed to retrieve balances' message={ JSON.stringify(error) } state='error'/>
     }
     if (isLoading || isFetching) {
       return <DataState state='loading' />

@@ -13,7 +13,7 @@ export function useGetAccountsByGroup (groupId: string | undefined): UseQueryRes
     queryFn: async () => {
       const accounts = await accountStoreAPI.getAll()
       return (groupId !== undefined)
-        ? accounts.filter((a) => a.group === groupId ? a : null)
+        ? accounts.filter((a) => a.group === groupId)
         : accounts
     }
   })

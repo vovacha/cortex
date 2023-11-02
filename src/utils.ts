@@ -21,6 +21,17 @@ export function classNames (...classes: any): any {
   return classes.filter(Boolean).join(' ')
 }
 
+export function isStableCoin (currencySymbol: string): boolean {
+  return currencySymbol.includes('USD')
+}
+
+export function formatCurrency (amount: string, currencySymbol: string): string {
+  if (isStableCoin(currencySymbol)) {
+    return amount.substring(0, amount.indexOf('.') + 3)
+  }
+  return amount
+}
+
 export async function openReadTextFile (): Promise<string | undefined> {
   const selected = await open({
     multiple: false,

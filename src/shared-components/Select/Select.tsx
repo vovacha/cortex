@@ -3,15 +3,19 @@ interface Props {
   value: any
   options: JSX.Element[]
   setter: React.Dispatch<React.SetStateAction<any>>
+  showLabel?: boolean
 }
 
-export function Select ({ name, value, options, setter }: Props): JSX.Element {
+export function Select ({ name, value, options, setter, showLabel = true }: Props): JSX.Element {
   const id = name.toLowerCase().replace(' ', '-')
-  return (<>
+  return <>
   <div className='sm:col-span-6'>
-    <label htmlFor='wallet' className='block text-sm font-medium leading-6 text-white'>
-      { name }
-    </label>
+    {showLabel
+      ? <label htmlFor={id} className='block text-sm font-medium leading-6 text-white'>
+          { name }
+        </label>
+      : null
+    }
     <div className='mt-1'>
       <select
         onChange={(event) => { setter(event.target.value) }}
@@ -25,5 +29,5 @@ export function Select ({ name, value, options, setter }: Props): JSX.Element {
       </select>
     </div>
   </div>
-  </>)
+  </>
 }

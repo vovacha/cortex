@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { LinkIcon, PlusSmallIcon, Squares2X2Icon } from '@heroicons/react/24/outline'
 
 import { accountManagerMenu as menu } from '@/routes'
-import { Button, Header, Modal, TableHead, EmptyData, Checkbox, InputEdit } from '@/shared-components'
+import { Button, Header, Modal, TableHead, DataState, Checkbox, InputEdit } from '@/shared-components'
 import {
   useDeleteAccountMut, useGetAccountGroups, useGetAccountsByGroup,
   useGetWallets, useUpdateAccountMut
@@ -127,7 +127,7 @@ export function Accounts (): JSX.Element {
                 <tbody className='divide-y divide-gray-800'>{(isLoading) ? tableRows() : null}</tbody>
               </table>
                 )
-              : <EmptyData title='No Accounts' message='Get started by creating a new Account'/>}
+              : <DataState title='No Accounts' message='Get started by creating a new Account'/>}
           </div>
         </div>
       </div>

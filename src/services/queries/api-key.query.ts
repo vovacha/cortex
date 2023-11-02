@@ -2,15 +2,20 @@ import {
   useMutation, useQuery, useQueryClient,
   type UseMutationResult, type UseQueryResult
 } from '@tanstack/react-query'
-import type { ApiKey, HasId, HasName } from '../../interfaces'
+import type { ApiKey, Exchanges, HasId, HasName } from '../../interfaces'
 import { apiKeyStoreAPI } from '../api/store.service'
 
 // Queries:
 
-export function useGetApiKeys (): UseQueryResult<ApiKey[], unknown> {
+export function useGetApiKeys (exchange: Exchanges | undefined): UseQueryResult<ApiKey[], unknown> {
   return useQuery({
     queryKey: ['api-keys'],
-    queryFn: async () => await apiKeyStoreAPI.getAll()
+    queryFn: async () => {
+      const apiKeys = await apiKeyStoreAPI.getAll()
+      return (exchange !== undefined)
+        ? apiKeys.filter(apiKey => apiKey.exchange === exchange)
+        : apiKeys
+    }
   })
 }
 

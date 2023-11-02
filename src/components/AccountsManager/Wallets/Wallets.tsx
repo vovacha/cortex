@@ -3,9 +3,9 @@ import {
   PlusSmallIcon, ArrowUpOnSquareStackIcon, ArrowDownOnSquareStackIcon, Squares2X2Icon
 } from '@heroicons/react/24/outline'
 
-import { Modal, Button, Header, TableHead, EmptyData, Checkbox, InputEdit } from '@/shared-components'
+import { Modal, Button, Header, TableHead, DataState, Checkbox, InputEdit } from '@/shared-components'
 import { accountManagerMenu as menu } from '@/routes'
-import { useGetWallets, useCreateWalletMut, useUpdateWalletMut, useDeleteWalletMut, useGetAccount, useGetAccountsByGroup } from '@/services/queries'
+import { useGetWallets, useCreateWalletMut, useUpdateWalletMut, useDeleteWalletMut, useGetAccountsByGroup } from '@/services/queries'
 import type { HasName, Wallet } from '@/interfaces'
 
 import { readWalletsFromFile } from './readWalletsFromFile'
@@ -116,7 +116,7 @@ export function Wallets (): JSX.Element {
                 <tbody className='divide-y divide-gray-800'>{(isLoading) ? tableRows() : null}</tbody>
               </table>
                 )
-              : <EmptyData title='No Wallets' message='Get started by creating a new Wallet'/>}
+              : <DataState title='No Wallets' message='Get started by creating a new Wallet'/>}
           </div>
         </div>
       </div>

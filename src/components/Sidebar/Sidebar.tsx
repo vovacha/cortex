@@ -5,10 +5,11 @@ import { Disclosure } from '@headlessui/react'
 import logo from '@/images/logo.png'
 import { classNames } from '@/utils'
 import { menu } from '@/routes'
-import { useSignOutMut } from '@/services/queries'
+import { useAppVersion, useSignOutMut } from '@/services/queries'
 import { useAuth } from '@/hooks/useAuth'
 
 export function Sidebar (): JSX.Element {
+  const version = useAppVersion().data
   // TODO: simplify to one call: auth.signOut()
   const signOut = useSignOutMut()
   const auth = useAuth()
@@ -16,10 +17,12 @@ export function Sidebar (): JSX.Element {
     signOut.mutate()
     auth.signOut()
   }
+
   return (
     <>
       <div className='flex h-16 shrink-0 items-center'>
         <img className='h-9 w-auto' src={logo} alt='Concierge' />
+        <p className='text-white pl-3'>Concierge <span className='text-xs text-gray-400'>v.{version}</span></p>
       </div>
       <nav className='flex flex-1 flex-col'>
         <ul role='list' className='flex flex-1 flex-col gap-y-7'>

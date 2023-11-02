@@ -6,7 +6,7 @@ import { generateWallet } from '@/web3'
 import { encryptWithAES } from '@/utils'
 import { useCreateWalletMut } from '@/services/queries'
 
-export default function GenerateWalletsModal ({ setShowModal }: ModalContentProps): JSX.Element {
+export default function GenerateWalletsModal ({ onClose }: ModalContentProps): JSX.Element {
   const [walletNumber, setWalletNumber] = useState(1)
   const [walletName, setWalletName] = useState('')
   const createWallet = useCreateWalletMut()
@@ -18,7 +18,7 @@ export default function GenerateWalletsModal ({ setShowModal }: ModalContentProp
       w.name = walletName
       await createWallet.mutateAsync(w as Partial<Wallet> & HasName)
     }
-    setShowModal(false)
+    onClose()
   }
   return <>
           <div className='grid grid-cols-6 gap-x-6 gap-y-8'>

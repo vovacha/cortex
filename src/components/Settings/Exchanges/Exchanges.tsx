@@ -9,7 +9,7 @@ import { useGetApiKeys, useDeleteApiKeysMut } from '@/services/queries'
 export function Exchanges (): JSX.Element {
   const [addApiKeyModal, setAddApiKeyModal] = useState(false)
   const deleteAllApiKeys = useDeleteApiKeysMut()
-  const apiKeys = useGetApiKeys().data ?? []
+  const apiKeys = useGetApiKeys(undefined).data ?? []
 
   return (<>
     <Header menu={menu}/>

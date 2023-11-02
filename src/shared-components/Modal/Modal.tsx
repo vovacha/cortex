@@ -6,10 +6,11 @@ interface ModalWindowProps {
   showModal: boolean
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>
   Content: (arg0: ModalContentProps) => JSX.Element
+  onClose?: () => void
   state?: any
 }
 
-export function Modal ({ showModal, setShowModal, state, Content }: ModalWindowProps): JSX.Element {
+export function Modal ({ showModal, setShowModal, state, onClose, Content }: ModalWindowProps): JSX.Element {
   return (
     <Transition.Root show={showModal} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={setShowModal}>
@@ -37,7 +38,11 @@ export function Modal ({ showModal, setShowModal, state, Content }: ModalWindowP
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-gray-900 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
-                <Content state={state} setShowModal={setShowModal}/>
+                <Content state={state} onClose={() => {
+                  setShowModal(false)
+                  onClose?.()
+                }
+                }/>
               </Dialog.Panel>
             </Transition.Child>
           </div>

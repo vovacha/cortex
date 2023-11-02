@@ -5,14 +5,14 @@ import type { ModalContentProps } from '@/interfaces'
 
 type Props = Omit<ModalContentProps, 'state'> & { state: string }
 
-export function EditGroupModal ({ state: groupId, setShowModal }: Props): JSX.Element {
+export function EditGroupModal ({ state: groupId, onClose }: Props): JSX.Element {
   const [groupName, setGroupName] = useState<string>()
   const getGroup = useGetAccountGroup(groupId)
   const updateGroup = useUpdateAccountGroupMut()
   const group = getGroup.data
 
   useEffect(() => {
-    if (getGroup.isLoading === false && getGroup.data !== undefined) {
+    if (!getGroup.isLoading && getGroup.data !== undefined) {
       setGroupName(getGroup.data.name)
     }
   }, [getGroup.data, getGroup.isLoading])
@@ -26,7 +26,7 @@ export function EditGroupModal ({ state: groupId, setShowModal }: Props): JSX.El
             <div className='sm:col-span-3'>
               <Button onClick={ () => {
                 updateGroup.mutate({ ...group, name: groupName })
-                setShowModal(false)
+                onClose()
               }} text='Save' />
             </div>
         </div>

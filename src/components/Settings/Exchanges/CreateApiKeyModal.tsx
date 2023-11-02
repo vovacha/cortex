@@ -4,7 +4,7 @@ import { Exchanges, type ModalContentProps } from '@/interfaces'
 import { enumKeys } from '@/utils'
 import { useCreateApiKeyMut } from '@/services/queries'
 
-export default function CreateApiKeyModal ({ setShowModal }: ModalContentProps): JSX.Element {
+export default function CreateApiKeyModal ({ onClose }: ModalContentProps): JSX.Element {
   const [apiKey, setApiKey] = useState('')
   const [secretKey, setSecretKey] = useState('')
   const [passphrase, setPassphrase] = useState('')
@@ -23,7 +23,7 @@ export default function CreateApiKeyModal ({ setShowModal }: ModalContentProps):
   function apiKeyCreate (): void {
     if (exchange !== null) {
       createApiKey.mutate({ apiKey, secretKey, passphrase, name, exchange })
-      setShowModal(false)
+      onClose()
     }
   }
   return <>

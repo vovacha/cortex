@@ -35,8 +35,8 @@ export interface Result {
 }
 
 export interface ModalContentProps {
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>
   state: any
+  onClose: () => void
 }
 
 export * from './accounts'

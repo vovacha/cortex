@@ -8,7 +8,7 @@ interface Props {
 
 const buttonTypes: any = {
   primary: ' bg-indigo-500 hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500',
-  secondary: 'bg-white/10 hover:bg-white/20',
+  secondary: 'bg-gray-600 hover:bg-gray-500',
   danger: 'bg-red-500 hover:bg-red-400'
 }
 

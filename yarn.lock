@@ -5656,9 +5656,9 @@ object.values@^1.1.6:
     define-properties "^1.2.0"
     es-abstract "^1.22.1"
 
-"okx-api@github:ConciergeApplication/okx-api#8edc92d44a7a2bb6d5fbbe55598b612bf04deba2":
+"okx-api@github:ConciergeApplication/okx-api#eeb5847224d485934c1fc9a74f993c884cabbbd4":
   version "1.1.4"
-  resolved "https://codeload.github.com/ConciergeApplication/okx-api/tar.gz/8edc92d44a7a2bb6d5fbbe55598b612bf04deba2"
+  resolved "https://codeload.github.com/ConciergeApplication/okx-api/tar.gz/eeb5847224d485934c1fc9a74f993c884cabbbd4"
   dependencies:
     axios "^0.21.0"
     crypto-js "^4.2.0"

@@ -5,7 +5,7 @@ import { useUpdateAccountMut, useGetAccountGroups } from '@/services/queries'
 
 type Props = Omit<ModalContentProps, 'state'> & { state: Account[] }
 
-export function AssignGroupModal ({ state: accounts, setShowModal }: Props): JSX.Element {
+export function AssignGroupModal ({ state: accounts, onClose }: Props): JSX.Element {
   const [group, setGroup] = useState()
   const updateAccount = useUpdateAccountMut()
   const groups = useGetAccountGroups().data ?? []
@@ -25,7 +25,7 @@ export function AssignGroupModal ({ state: accounts, setShowModal }: Props): JSX
       account.group = group
       await updateAccount.mutateAsync(account)
     }
-    setShowModal(false)
+    onClose()
   }
 
   return <>

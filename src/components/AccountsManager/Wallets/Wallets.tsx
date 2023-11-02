@@ -34,7 +34,7 @@ export function Wallets (): JSX.Element {
     wallets.length === walletNames.length
 
   useEffect(() => {
-    if (getWallets.isLoading === false && getWallets.data !== undefined) {
+    if (!getWallets.isLoading && getWallets.data !== undefined) {
       setWalletNames(getWallets.data.map((w) => w.name))
       setSelectedWallets(getWallets.data.map(() => false))
       setIsSelectedAll(false)

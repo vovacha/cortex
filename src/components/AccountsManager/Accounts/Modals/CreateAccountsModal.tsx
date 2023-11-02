@@ -3,7 +3,7 @@ import { Button, Input } from '@/shared-components'
 import { useCreateAccountMut } from '@/services/queries'
 import type { ModalContentProps } from '@/interfaces'
 
-export function CreateAccountsModal ({ setShowModal }: ModalContentProps): JSX.Element {
+export function CreateAccountsModal ({ onClose }: ModalContentProps): JSX.Element {
   const [accountNumber, setAccountNumber] = useState(1)
   const [accountName, setAccountName] = useState('')
   const createAccount = useCreateAccountMut()
@@ -12,7 +12,7 @@ export function CreateAccountsModal ({ setShowModal }: ModalContentProps): JSX.E
     for (let i = 1; i <= accountNumber; i++) {
       await createAccount.mutateAsync({ name: accountName })
     }
-    setShowModal(false)
+    onClose()
   }
 
   return <>

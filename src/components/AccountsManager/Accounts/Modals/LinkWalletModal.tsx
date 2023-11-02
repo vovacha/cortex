@@ -6,7 +6,7 @@ import { walletCompactView } from '@/utils'
 
 type Props = Omit<ModalContentProps, 'state'> & { state: Account }
 
-export function LinkWalletModal ({ state: account, setShowModal }: Props): JSX.Element {
+export function LinkWalletModal ({ state: account, onClose }: Props): JSX.Element {
   const [wallet, setWallet] = useState(account.evmWallet)
   const updateAccount = useUpdateAccountMut()
   const wallets = useGetWallets().data ?? []
@@ -28,7 +28,7 @@ export function LinkWalletModal ({ state: account, setShowModal }: Props): JSX.E
   function editAccount (): void {
     account.evmWallet = wallet
     updateAccount.mutate(account)
-    setShowModal(false)
+    onClose()
   }
 
   return <>

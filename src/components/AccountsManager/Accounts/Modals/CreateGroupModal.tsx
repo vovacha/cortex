@@ -3,7 +3,7 @@ import { Button, Input } from '@/shared-components'
 import { useCreateAccountGroupMut } from '@/services/queries'
 import type { ModalContentProps } from '@/interfaces'
 
-export function CreateGroupModal ({ setShowModal }: ModalContentProps): JSX.Element {
+export function CreateGroupModal ({ onClose }: ModalContentProps): JSX.Element {
   const [groupName, setGroupName] = useState('')
   const createGroup = useCreateAccountGroupMut()
 
@@ -13,7 +13,7 @@ export function CreateGroupModal ({ setShowModal }: ModalContentProps): JSX.Elem
     <div className='sm:col-span-3'>
       <Button onClick={ () => {
         createGroup.mutate({ name: groupName })
-        setShowModal(false)
+        onClose()
       }} text='Add Group' />
     </div>
   </div>

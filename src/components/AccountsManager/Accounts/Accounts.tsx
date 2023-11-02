@@ -35,7 +35,7 @@ export function Accounts (): JSX.Element {
   const updateAccount = useUpdateAccountMut()
 
   useEffect(() => {
-    if (getAccounts.isLoading === false && getAccounts.data !== undefined) {
+    if (!getAccounts.isLoading && getAccounts.data !== undefined) {
       setAccountNames(getAccounts.data.map((a) => a.name))
       setSelectedAccounts(getAccounts.data.map(() => false))
       setIsSelectedAll(false)
@@ -57,12 +57,6 @@ export function Accounts (): JSX.Element {
         selectedAccounts[i] = false
       }
     }
-  }
-
-  function selectedGroupOnClick (): void {
-    setAssignGroupModal(true)
-    setSelectedAccounts(accounts.map(() => false))
-    setIsSelectedAll(false)
   }
 
   const selectAllCheckbox = <Checkbox index={0} name='checkbox-all'
@@ -134,12 +128,15 @@ export function Accounts (): JSX.Element {
     </div>
     <Modal showModal={ addAccountModal } setShowModal={ setAddAccountModal } Content={ CreateAccountsModal } />
     <Modal showModal={ linkWalletModal } setShowModal={ setLinkWalletModal } state={linkWalletAccount} Content={ LinkWalletModal } />
-    <Modal showModal={ assignGroupModal } setShowModal={ setAssignGroupModal }
+    <Modal onClose={() => {
+      setSelectedAccounts(accounts.map(() => false))
+      setIsSelectedAll(false)
+    }} showModal={ assignGroupModal } setShowModal={ setAssignGroupModal }
       state={accounts.filter((account, i) => selectedAccounts[i] ? account : null)} Content={ AssignGroupModal } />
     <div className='fixed bottom-0 p-2 pl-5'>
         <Button onClick={() => { setAddAccountModal(true) }}
           text={ <><PlusSmallIcon className='inline h-4 w-4' aria-hidden='true' /> Accounts</>} />
-        <Button disabled={!isAnySelected} onClick={selectedGroupOnClick}
+        <Button disabled={!isAnySelected} onClick={() => { setAssignGroupModal(true) }}
           text={ <><Squares2X2Icon className='inline h-4 w-4' aria-hidden='true' /> Assign Group</>} />
         <Button disabled={!isAnySelected} onClick={() => { void selectedDeleteOnClick() }} type='danger'
           text={ <><Squares2X2Icon className='inline h-4 w-4' aria-hidden='true' /> Delete</>} />

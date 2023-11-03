@@ -5,7 +5,7 @@ import {
   Sender, GeneralSettings,
   SignIn, SignUp, ConfirmSignUp, ForgotPassword, ForgotPasswordSubmit,
   Accounts, Wallets, Exchanges,
-  OkxBase, OkxAccounts, OkxSubAccounts,
+  OkxBalances,
   BinanceAccounts
 } from './components'
 import { PrivateRoute, IndexPage } from './shared-components'
@@ -33,7 +33,7 @@ export const accountManagerMenu: HeaderMenuItem[] = [
   { name: 'EVM Wallets', href: '/accounts-manager/wallets' }
 ]
 export const okxMenu: HeaderMenuItem[] = [
-  { name: 'Main Account', href: '/exchanges-manager/okx/accounts' },
+  { name: 'Balances', href: '/exchanges-manager/okx/balances' },
   { name: 'Sub Accounts', href: '/exchanges-manager/okx/sub-accounts' }
 ]
 export const binanceMenu: HeaderMenuItem[] = [
@@ -68,9 +68,9 @@ export const router = createBrowserRouter([
       {
         path: '/exchanges-manager/okx/*',
         children: [
-          { index: true, element: <IndexPage to='/exchanges-manager/okx/accounts' /> },
-          { path: 'accounts', element: <OkxBase><OkxAccounts /></OkxBase> },
-          { path: 'sub-accounts', element: <OkxBase><OkxSubAccounts /></OkxBase> }
+          { index: true, element: <IndexPage to='/exchanges-manager/okx/balances' /> },
+          { path: 'balances', element: <OkxBalances></OkxBalances> },
+          { path: 'sub-accounts', element: <OkxBalances></OkxBalances> }
         ]
       },
       {

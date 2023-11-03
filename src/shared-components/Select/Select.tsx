@@ -4,9 +4,10 @@ interface Props {
   options: JSX.Element[]
   setter: React.Dispatch<React.SetStateAction<any>>
   showLabel?: boolean
+  marginTop?: string
 }
 
-export function Select ({ name, value, options, setter, showLabel = true }: Props): JSX.Element {
+export function Select ({ name, value, options, setter, showLabel = true, marginTop = 'mt-1' }: Props): JSX.Element {
   const id = name.toLowerCase().replace(' ', '-')
   return <>
   <div className='sm:col-span-6'>
@@ -16,7 +17,7 @@ export function Select ({ name, value, options, setter, showLabel = true }: Prop
         </label>
       : null
     }
-    <div className='mt-1'>
+    <div className={marginTop}>
       <select
         onChange={(event) => { setter(event.target.value) }}
         value={value}

@@ -1,17 +1,23 @@
-import { useState, useContext } from 'react'
-import classNames from 'classnames'
-import { ArrowPathIcon, ArrowsRightLeftIcon } from '@heroicons/react/24/solid'
+import { useState } from 'react'
+import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid'
+import { type UseQueryResult } from '@tanstack/react-query'
+import { type AccountBalanceDetail, type AccountBalance } from 'okx-api/src'
 
-import { Button, Checkbox, DataState, TableHead } from '@/shared-components'
-import { useAccountBalances } from '@/services/queries'
+import { Button, Checkbox, DataState, Modal, TableHead } from '@/shared-components'
 import { formatCurrency } from '@/utils'
-import { ApiKeyContext } from '../Context'
+import { type ApiKey } from '@/interfaces'
+import { SwapModal } from './SwapModal'
 
-export function OkxAccounts (): JSX.Element {
-  const apiKey = useContext(ApiKeyContext)
+interface Props {
+  apiKey: ApiKey
+  balancesQuery: UseQueryResult<AccountBalance[], Error>
+}
+
+export function OkxAccounts ({ apiKey, balancesQuery }: Props): JSX.Element {
+  const [balancesToSwap, setBalancesToSwap] = useState<AccountBalanceDetail[]>([])
   const [isSelectedAll, setIsSelectedAll] = useState(false)
-  const [selectedAssets, setSelectedAssets] = useState<string[]>([])
-  const { data: balancesData, isLoading, isFetching, isError, error, refetch } = useAccountBalances(apiKey)
+  const [swapModal, setSwapModal] = useState(false)
+  const { data: balancesData, isLoading, isFetching, isError, error } = balancesQuery
 
   const balances = (balancesData !== undefined && balancesData.length > 0)
     ? balancesData[0].details
@@ -25,45 +31,34 @@ export function OkxAccounts (): JSX.Element {
     if (isLoading || isFetching) {
       return <DataState state='loading' />
     }
-    if (apiKey === undefined) {
-      return <DataState message='Select API key' state='empty' />
-    }
     if (!hasData) {
       return <DataState title='No assets' message='Account has no assets available' />
     }
     const selectAllCheckbox = <>
       <Checkbox index={0} name='checkbox-all' isChecked={isSelectedAll} onChange={() => {
         !isSelectedAll
-          ? setSelectedAssets(balances.map(item => item.ccy))
-          : setSelectedAssets([])
+          ? setBalancesToSwap([...balances])
+          : setBalancesToSwap([])
         setIsSelectedAll(!isSelectedAll)
       }} />
-    </>
-    const balanceWithRefreshButton = <>
-      <div>
-        Balance&nbsp;
-        <button title='Refresh' onClick={ async () => { await refetch() } }>
-          <ArrowPathIcon className={classNames('inline h-4 w-4', { 'animate-spin': isLoading || isFetching })} aria-hidden='true'/>
-        </button>
-      </div>
     </>
 
     return <>
       <table className='min-w-full divide-y divide-gray-700 max-h-screen'>
-        <TableHead columns={[selectAllCheckbox, 'Token', balanceWithRefreshButton]}/>
+        <TableHead columns={[selectAllCheckbox, 'Token', 'Balance']}/>
         <tbody className='divide-y divide-gray-800'>
           {balances.map((item, i) => {
             return <tr key={i}>
               <td>
-                <Checkbox index={i} name='account-checkbox' isChecked={selectedAssets.includes(item.ccy)}
+                <Checkbox index={i} name='account-checkbox' isChecked={balancesToSwap.includes(item)}
                   onChange={() => {
-                    if (!selectedAssets.includes(item.ccy)) {
-                      setSelectedAssets([...selectedAssets, item.ccy])
-                      if (selectedAssets.length + 1 === balances.length) {
+                    if (!balancesToSwap.includes(item)) {
+                      setBalancesToSwap([...balancesToSwap, item])
+                      if (balancesToSwap.length + 1 === balances.length) {
                         setIsSelectedAll(true)
                       }
                     } else {
-                      setSelectedAssets(selectedAssets.filter(asset => asset !== item.ccy))
+                      setBalancesToSwap(balancesToSwap.filter(asset => asset !== item))
                       setIsSelectedAll(false)
                     }
                   }
@@ -82,10 +77,12 @@ export function OkxAccounts (): JSX.Element {
 
   return <>
     <div className='grid grid-cols-12'>
-      <div className='col-span-12 md:col-span-10 lg:col-span-8 xl:col-span-6 col-start-1 md:col-start-2 lg:col-start-3 xl:col-start-4 text-sm'>
+      <div className='col-span-12 md:col-span-10 md:col-start-2'>
+        <div className='font-semibold text-center mb-4'>Main account, tokens</div>
           {getBalancesTable()}
-          <div className='fixed bottom-0 mb-2'>
-            <Button onClick={() => {}} disabled={selectedAssets.filter(asset => asset !== 'USDT').length === 0}
+          <Modal showModal={ swapModal } setShowModal={ setSwapModal } state={ { apiKey, balancesToSwap } } Content={ SwapModal } />
+          <div className='fixed bottom-2 mt-8 text-center'>
+            <Button onClick={ () => { setSwapModal(true) } } disabled={balancesToSwap.filter(asset => asset.ccy !== 'USDT').length === 0}
               text={<><ArrowsRightLeftIcon className='inline h-4 w-4' aria-hidden='true'/> Swap selected to USDT  </>} />
           </div>
       </div>

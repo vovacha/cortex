@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid'
 import { type UseQueryResult } from '@tanstack/react-query'
 import { type AccountBalanceDetail, type AccountBalance } from 'okx-api/src'
+import { overrideGlobalXHR } from 'tauri-xhr'
 
 import { Button, Checkbox, DataState, Modal, TableHead } from '@/shared-components'
 import { formatCurrency } from '@/utils'
@@ -13,11 +14,13 @@ interface Props {
   balancesQuery: UseQueryResult<AccountBalance[], Error>
 }
 
+overrideGlobalXHR()
+
 export function OkxAccounts ({ apiKey, balancesQuery }: Props): JSX.Element {
   const [balancesToSwap, setBalancesToSwap] = useState<AccountBalanceDetail[]>([])
   const [isSelectedAll, setIsSelectedAll] = useState(false)
   const [swapModal, setSwapModal] = useState(false)
-  const { data: balancesData, isLoading, isFetching, isError, error } = balancesQuery
+  const { data: balancesData, isLoading, isFetching, isError, error, refetch } = balancesQuery
 
   const balances = (balancesData !== undefined && balancesData.length > 0)
     ? balancesData[0].details
@@ -80,7 +83,7 @@ export function OkxAccounts ({ apiKey, balancesQuery }: Props): JSX.Element {
       <div className='col-span-12 md:col-span-10 md:col-start-2'>
         <div className='font-semibold text-center mb-4'>Main account, tokens</div>
           {getBalancesTable()}
-          <Modal showModal={ swapModal } setShowModal={ setSwapModal } state={ { apiKey, balancesToSwap } } Content={ SwapModal } />
+          <Modal showModal={ swapModal } setShowModal={ setSwapModal } state={ { apiKey, balancesToSwap } } Content={ SwapModal } onClose={async () => { await refetch() }}/>
           <div className='fixed bottom-2 mt-8 text-center'>
             <Button onClick={ () => { setSwapModal(true) } } disabled={balancesToSwap.filter(asset => asset.ccy !== 'USDT').length === 0}
               text={<><ArrowsRightLeftIcon className='inline h-4 w-4' aria-hidden='true'/> Swap selected to USDT  </>} />

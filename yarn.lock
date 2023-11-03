@@ -2590,7 +2590,7 @@
     "@tanstack/query-core" "4.36.1"
     use-sync-external-store "^1.2.0"
 
-"@tauri-apps/api@1.5.1", "@tauri-apps/api@^1.0.2":
+"@tauri-apps/api@1.5.1", "@tauri-apps/api@^1.0.2", "@tauri-apps/api@^1.3.0":
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/@tauri-apps/api/-/api-1.5.1.tgz#9074476c4323f71351db624e9711c99277cdfb99"
   integrity sha512-6unsZDOdlXTmauU3NhWhn+Cx0rODV+rvNvTdvolE5Kls5ybA6cqndQENDt1+FS0tF7ozCP66jwWoH6a5h90BrA==
@@ -6385,6 +6385,13 @@ tapable@^2.2.0:
   resolved "https://github.com/tauri-apps/tauri-plugin-store#6e19887b1bdea9b921a31993d72396a350731e07"
   dependencies:
     "@tauri-apps/api" "1.5.1"
+
+tauri-xhr@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/tauri-xhr/-/tauri-xhr-0.1.2.tgz#030b6c0d7ae9cc49576831c103391f6fb074d8af"
+  integrity sha512-7VHXhv9/sAkmWu9J4nsHlQf82Un/tMLptdi2WppPYstYg7AfLx58TBeRvA5gI+th19EW2howLMet29SGnMYsIA==
+  dependencies:
+    "@tauri-apps/api" "^1.3.0"
 
 test-exclude@^6.0.0:
   version "6.0.0"

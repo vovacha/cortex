@@ -25,6 +25,13 @@
           }
         ]
       },
+      "http": {
+        "all": false,
+        "request": false,
+        "scope": [
+          "https://www.okx.com/api/*"
+        ]
+      },
       "all": true
     },
     "bundle": {

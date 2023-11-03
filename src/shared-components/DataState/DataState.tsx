@@ -22,7 +22,7 @@ export function DataState ({ title, message, state = 'empty' }: Props): JSX.Elem
   }
 
   return (
-    <div className="text-center">
+    <div className="text-center overflow-auto">
       {getIcon()}
       <h3 className="mt-2 text-sm font-semibold text-white">{title}</h3>
       <p className="mt-1 text-sm text-gray-500">{message}</p>

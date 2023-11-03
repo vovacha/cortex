@@ -44,9 +44,12 @@ export function SwapModal ({ state: { balancesToSwap, apiKey }, onClose }: Props
             {filteredBalances.map((b, i) => <li key={i}>{b.ccy}</li>)}
           </ul>
         </div>
-        <Button onClick={ async () => { execute() }} text='Confirm' disabled={ placeOrders.isLoading } />
         { placeOrders.isLoading ? <DataState state='loading' message='Swapping assets...' /> : null }
         { placeOrders.isError ? <DataState state='error' title='Error during swapping' message={ JSON.stringify(placeOrders.error) }/> : null }
+        <div className='mt-8'>
+          <Button onClick={ async () => { execute() }} text='Confirm' disabled={ placeOrders.isLoading } />
+          <Button onClick={ () => { onClose() } } text='Close' type='secondary' />
+        </div>
     </div>
   </div>
   </>

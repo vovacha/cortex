@@ -23,6 +23,7 @@
         "react/jsx-uses-vars": "error",
         "no-use-before-define": "off",
         "@typescript-eslint/no-use-before-define": ["error"],
+        "@typescript-eslint/consistent-type-definitions": "off",
         "@typescript-eslint/no-misused-promises": [
             "error",
             {

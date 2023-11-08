@@ -127,7 +127,7 @@ export function Accounts (): JSX.Element {
       </div>
     </div>
     <Modal showModal={ addAccountModal } setShowModal={ setAddAccountModal } Content={ CreateAccountsModal } />
-    <Modal showModal={ linkWalletModal } setShowModal={ setLinkWalletModal } state={linkWalletAccount} Content={ LinkWalletModal } />
+    <Modal showModal={ linkWalletModal } setShowModal={ setLinkWalletModal } state={ linkWalletAccount } Content={ LinkWalletModal } />
     <Modal onClose={() => {
       setSelectedAccounts(accounts.map(() => false))
       setIsSelectedAll(false)

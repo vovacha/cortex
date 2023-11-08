@@ -34,7 +34,6 @@ export abstract class BaseStore<T extends HasId> {
   public async create (data: Partial<T> & HasName): Promise<T> {
     const id = uuidv4()
     data.id = id
-    data.name = await this.modifyNameWithCount(data.name)
     const obj = ({ ...data } as unknown) as T
     await Promise.all([this.store.set(id, obj), this.addToList(id)])
     return obj
@@ -69,7 +68,7 @@ export abstract class BaseStore<T extends HasId> {
   * Returns a new name with the postfix of times the name was used.
   * @param {string} name
   */
-  protected async modifyNameWithCount (name: string): Promise<string> {
+  public async modifyNameWithCount (name: string): Promise<string> {
     const key = `${this.listKey}-${name}`
     const count: number = await this.store.get(key) ?? 0
     await this.store.set(key, count + 1)
@@ -89,9 +88,19 @@ export abstract class BaseStore<T extends HasId> {
   }
 }
 
-class AccountStore extends BaseStore <Account> { }
+class AccountStore extends BaseStore <Account> {
+  public async create (data: Partial<Account> & HasName): Promise<Account> {
+    const name = await this.modifyNameWithCount(data.name)
+    return await super.create({ ...data, name })
+  }
+}
+class WalletStore extends BaseStore <Wallet> {
+  public async create (data: Partial<Wallet> & HasName): Promise<Wallet> {
+    const name = await this.modifyNameWithCount(data.name)
+    return await super.create({ ...data, name })
+  }
+}
 class AccountGroupStore extends BaseStore <Group> { }
-class WalletStore extends BaseStore <Wallet> { }
 class ApiKeyStore extends BaseStore <ApiKey> { }
 
 export const accountStore = new AccountStore('accounts')

@@ -1,17 +1,6 @@
-import { JsonRpcProvider, Wallet, Contract, formatUnits, parseUnits, parseEther } from 'ethers'
+import { Wallet, Contract, formatUnits, parseUnits, parseEther, type JsonRpcProvider } from 'ethers'
 
-import type { TransactionReceipt } from '../interfaces'
-
-export const chainNames: any = {
-  Ethereum: 'eth',
-  'BNB Smart Chain': 'bsc',
-  Arbitrum: 'arbitrum',
-  'Arbitrum Nova': 'arbitrumnova',
-  Polygon: 'polygon',
-  Optimism: 'optimism',
-  Avalanche: 'avalanche',
-  'zkSync Era': 'zksync_era'
-}
+import type { TransactionReceipt } from '@/interfaces'
 
 const ERC20ABI = [
   'function name() view returns (string)',
@@ -25,13 +14,15 @@ const ERC20ABI = [
 const WAIT_TX_TIMEOUT = 90000 // ms
 const WAIT_TX_CONF = 1 // block confirmations
 
-function getJsonRpcProvider (chain: string): JsonRpcProvider {
-  const API_KEY = import.meta.env.VITE_ANKR_API_KEY
-  return new JsonRpcProvider(`https://rpc.ankr.com/${chain}/${API_KEY}`)
+interface Props {
+  provider: JsonRpcProvider
+  privateKey: string
+  toAddress: string
+  amount: number
+  contractAddress: string
 }
 
-export async function sendNativeCurrency (chain: string, privateKey: string, toAddress: string, amount: number): Promise<TransactionReceipt> {
-  const provider = getJsonRpcProvider(chain)
+export async function sendNativeCurrency ({ provider, privateKey, toAddress, amount }: Omit<Props, 'contractAddress'>): Promise<TransactionReceipt> {
   const wallet = new Wallet(privateKey)
   const signer = wallet.connect(provider)
   const balance = await provider.getBalance(wallet.address)
@@ -51,8 +42,7 @@ export async function sendNativeCurrency (chain: string, privateKey: string, toA
   return message
 }
 
-export async function sendToken (chain: string, privateKey: string, toAddress: string, amount: number, contractAddress: string): Promise<TransactionReceipt> {
-  const provider = getJsonRpcProvider(chain)
+export async function sendToken ({ provider, privateKey, toAddress, amount, contractAddress }: Required<Props>): Promise<TransactionReceipt> {
   const wallet = new Wallet(privateKey)
   const signer = wallet.connect(provider)
   const contract = new Contract(contractAddress, ERC20ABI, signer)
@@ -76,17 +66,10 @@ export async function sendToken (chain: string, privateKey: string, toAddress: s
   return message
 }
 
-export async function validateContract (chain: string, address: string): Promise<boolean> {
-  const provider = getJsonRpcProvider(chain)
+export async function validateContract ({ provider, contractAddress }: Omit<Props, 'privateKey' | 'toAddress' | 'amount'>): Promise<boolean> {
   try {
-    const code = await provider.getCode(address)
+    const code = await provider.getCode(contractAddress)
     if (code !== '0x') return true
   } catch (error) {}
   return false
-}
-
-export function privateKeyToWalletAddress (privateKey: string): string | undefined {
-  try {
-    return new Wallet(privateKey).address
-  } catch (error) {}
 }

@@ -1,7 +1,7 @@
 import { message } from '@tauri-apps/api/dialog'
-import { openReadTextFile, encryptWithAES } from '../../../utils'
-import { privateKeyToWalletAddress } from '../../../web3'
-import type { Wallet } from '../../../interfaces'
+import { openReadTextFile, encryptWithAES } from '@/utils'
+import { privateKeyToWalletAddress } from '@/services/web3'
+import type { Wallet } from '@/interfaces'
 
 export async function readWalletsFromFile (): Promise<Array<Partial<Wallet>>> {
   const errorKeys: string[] = []

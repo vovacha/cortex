@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import type { Account, ModalContentProps } from '@/interfaces'
-import { Button, Select } from '@/shared-components'
+import { Button, SelectNew } from '@/shared-components'
 import { useUpdateAccountMut, useGetAccountGroups } from '@/services/queries'
 
-type Props = Omit<ModalContentProps, 'state'> & { state: Account[] }
+type Props = ModalContentProps & { state: Account[] }
 
 export function AssignGroupModal ({ state: accounts, onClose }: Props): JSX.Element {
-  const [group, setGroup] = useState()
+  const [form, setForm] = useState({ group: undefined })
   const updateAccount = useUpdateAccountMut()
   const groups = useGetAccountGroups().data ?? []
   const CHOOSE = 'Choose'
@@ -22,7 +22,7 @@ export function AssignGroupModal ({ state: accounts, onClose }: Props): JSX.Elem
 
   async function assignGroupToAccounts (): Promise<void> {
     for (const account of accounts) {
-      account.group = group
+      account.group = form.group
       await updateAccount.mutateAsync(account)
     }
     onClose()
@@ -30,7 +30,7 @@ export function AssignGroupModal ({ state: accounts, onClose }: Props): JSX.Elem
 
   return <>
   <div className='grid grid-cols-6 gap-x-6 gap-y-8'>
-    <Select name='Group' value={group} options={getGroupsOptions()} setter={setGroup} />
+    <SelectNew label='Group' name={'group'} form={form} setForm={setForm} options={getGroupsOptions()} />
     <div className='relative sm:col-span-6'>
       <Button onClick={ () => { void assignGroupToAccounts() } } text='Assign Group'/>
     </div>

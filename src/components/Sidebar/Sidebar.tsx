@@ -21,8 +21,8 @@ export function Sidebar (): JSX.Element {
   return (
     <>
       <div className='flex h-16 shrink-0 items-center'>
-        <img className='h-9 w-auto' src={logo} alt='Concierge' />
-        <p className='text-white pl-3'>Concierge <span className='text-xs text-gray-400'>v.{version}</span></p>
+        <img className='h-9 w-auto' src={logo} alt='Cortex' />
+        <p className='text-white pl-3'>Cortex <span className='text-xs text-gray-400'>v.{version}</span></p>
       </div>
       <nav className='flex flex-1 flex-col'>
         <ul role='list' className='flex flex-1 flex-col gap-y-7'>

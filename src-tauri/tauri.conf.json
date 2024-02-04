@@ -7,7 +7,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "Concierge",
+    "productName": "Cortex",
     "version": "0.44.0"
   },
   "tauri": {
@@ -43,7 +43,7 @@
       },
       "externalBin": [],
       "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
-      "identifier": "com.elrmcf.dev",
+      "identifier": "com.cortex.dev",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -72,7 +72,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "Concierge",
+        "title": "Cortex",
         "width": 1400
       }
     ]

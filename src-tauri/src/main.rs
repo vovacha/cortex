@@ -10,7 +10,7 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
-            StoreBuilder::new(app.handle(), "concierge_db.dat".parse()?).build();
+            StoreBuilder::new(app.handle(), "cortex_db.dat".parse()?).build();
             #[cfg(debug_assertions)] // only include this code on debug builds
             {
                 let window = app.get_window("main").unwrap();

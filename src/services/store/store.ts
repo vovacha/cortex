@@ -2,7 +2,7 @@ import { Store } from 'tauri-plugin-store-api'
 import { v4 as uuidv4 } from 'uuid'
 import type { Account, Group, Wallet, ApiKey, HasId, HasName } from '../../interfaces'
 
-const STORE_FILE_NAME = 'concierge_db.dat'
+const STORE_FILE_NAME = 'cortex_db.dat'
 // TODO: implement singleton factory method
 export abstract class BaseStore<T extends HasId> {
   public readonly listKey

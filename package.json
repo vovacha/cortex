@@ -1,5 +1,5 @@
 {
-  "name": "concierge",
+  "name": "cortex",
   "private": true,
   "version": "0.1.0",
   "scripts": {
@@ -23,7 +23,7 @@
     "classnames": "^2.3.2",
     "crypto-js": "^4.1.1",
     "ethers": "^6.7.1",
-    "okx-api": "github:ConciergeApplication/okx-api#eeb5847224d485934c1fc9a74f993c884cabbbd4",
+    "okx-api": "github:vovacha/okx-api#199d058a1c380574533ac77d172e04798a6991ba",
     "postcss": "^8.4.29",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -61,6 +61,6 @@
   },
   "main": "src/main.tsx",
   "repository": "https://github.com/oSethoum/tauri-react-template.git",
-  "author": "ELRMCF <volbr@pm.me>",
+  "author": "Volodymyr Brazhnyk <volbr@pm.me>",
   "license": "MIT"
 }

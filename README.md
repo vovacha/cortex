@@ -18,12 +18,14 @@ To be implemented:
 
 ## How to build the app
 
-Prerequisites: Ensure that Rust, Node, and Yarn are installed, and an AWS Cognito Pool has been created.
+Prerequisites: ensure that Rust, Node, and Yarn are installed, and an AWS Cognito Pool has been created.
 
 Rename `example.env` to `.env` and provide values for all the variables.
 
 Install the dependencies:
+
 `yarn install`
 
 Build and run a development version:
+
 `yarn tauri:dev`

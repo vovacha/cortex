@@ -16,6 +16,8 @@ To be implemented:
 - Token transfers from non-custodial wallets.
 - Completion of the IOTA Stronghold Keystore integration for storing private keys and signing transactions. Some progress has been made, but the work remains unfinished.
 
+<img src="https://raw.githubusercontent.com/vovacha/cortex/main/ui.png" alt="UI example">
+
 ## How to build the app
 
 Prerequisites: ensure that Rust, Node, and Yarn are installed, and an AWS Cognito Pool has been created.

@@ -6,15 +6,15 @@ Techs: TypeScript, Rust, Tauri, React, React Query, Tailwind CSS, AWS Cognito, I
 
 Features currently available:
 
-- Registration and authentication through AWS Cognito.
-- Account and wallet management, allowing the import/export of private keys.
-- Centralized exchange (CEX) integration, enabling access to account and sub-account tokens, balances, and withdrawals (OKX integration is complete).
+- Registration and authentication facilitated via AWS Cognito.
+- Management of accounts and wallets, including the capability to import/export private keys.
+- Integration with centralized exchanges (CEX), granting access to account and sub-account tokens, balances, and withdrawals (OKX integration has been finalized).
 
-To be implemented:
+Upcoming:
 
-- Integration of Binance.
-- Token transfers from non-custodial wallets.
-- Completion of the IOTA Stronghold Keystore integration for storing private keys and signing transactions. Some progress has been made, but the work remains unfinished.
+- Integration with Binance.
+- Enablement of token transfers from non-custodial wallets.
+- Finalization of the integration of IOTA Stronghold Keystore for storing private keys and signing transactions. Progress has been made, but completion of the work is pending.
 
 <img src="https://raw.githubusercontent.com/vovacha/cortex/main/ui.png" alt="UI example">
 
